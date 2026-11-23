@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XOS 16 Launcher</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --xos-accent: #00e676;
+            --xos-glass: rgba(22, 26, 35, 0.52);
+            --xos-border: rgba(255, 255, 255, 0.16);
+            --text-main: #ffffff;
+            --text-muted: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            /* Transparent Wallpaper Background */
+            background: transparent;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Subtle top/bottom vignette for readability over bright wallpapers */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.35) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Status Bar Padding for Real Android Status Bar */
+        .status-spacer {
+            height: 28px;
+            width: 100%;
+            z-index: 5;
+        }
+
+        /* XOS 16 Widget Area */
+        .xos-widget-area {
+            padding: 6px 22px 10px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .clock-box h1 {
+            font-size: 54px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+            background: linear-gradient(to bottom, #ffffff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35));
+        }
+
+        .clock-box .accent-dot {
+            color: var(--xos-accent);
+            -webkit-text-fill-color: var(--xos-accent);
+        }
+
+        .clock-box p {
+            font-size: 13px;
+            color: #f1f5f9;
+            margin-top: 5px;
+            font-weight: 500;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+
+        .xos-pill-widget {
+            background: var(--xos-glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--xos-border);
+            border-radius: 22px;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            min-width: 118px;
+        }
+
+        .pill-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .pill-row i {
+            color: var(--xos-accent);
+            width: 14px;
+            text-align: center;
+        }
+
+        /* Search Bar */
+        .search-container {
+            padding: 0 20px;
+            margin-bottom: 6px;
+            z-index: 5;
+        }
+
+        .xos-search {
+            background: var(--xos-glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--xos-border);
+            border-radius: 50px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .xos-search input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .xos-search input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Multi-Page Horizontal Home Screen Container */
+        .pages-viewport {
+            flex: 1;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+        }
+
+        .pages-track {
+            display: flex;
+            width: 300vw; /* 3 Home Pages */
+            height: 100%;
+            transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+
+        .home-page {
+            width: 100vw;
+            height: 100%;
+            padding: 8px 18px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: min-content;
+            gap: 16px 10px;
+            align-content: start;
+        }
+
+        /* Larger Screenshot-matched Icon Sizing + HTML Design */
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            touch-action: pan-x pan-y;
+        }
+
+        .app-item:active {
+            transform: scale(0.88);
+        }
+
+        .app-item.dragging {
+            transform: scale(1.18);
+            z-index: 90;
+            opacity: 0.92;
+            filter: drop-shadow(0 12px 20px rgba(0,0,0,0.55));
+        }
+
+        .app-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .app-name {
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            max-width: 78px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.85);
+            pointer-events: none;
+        }
+
+        /* Edit / Long-Press Icon Badge */
+        .edit-mode .app-item::after {
+            content: "\f304";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: -4px;
+            right: 4px;
+            background: var(--xos-accent);
+            color: #000;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+
+        /* Page Indicator Dots (Like Screenshot) */
+        .page-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 0;
+            z-index: 5;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.38);
+            transition: all 0.25s ease;
+        }
+
+        .dot.active {
+            width: 14px;
+            border-radius: 10px;
+            background: #ffffff;
+        }
+
+        /* Bottom Dock */
+        .dock-wrapper {
+            padding: 4px 16px 18px 16px;
+            z-index: 5;
+        }
+
+        .xos-dock {
+            background: var(--xos-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--xos-border);
+            border-radius: 30px;
+            padding: 12px 14px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .xos-dock .app-name {
+            display: none;
+        }
+
+        /* XOS 16 Full Screen App Drawer with Premium Spring Physics */
+        .app-drawer {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 17, 26, 0.84);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+            padding: 32px 16px 18px 16px;
+            will-change: transform, opacity;
+        }
+
+        .app-drawer.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Top Category Tabs (Like Screenshot 2) */
+        .category-bar {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding: 6px 6px 12px 6px;
+            scrollbar-width: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 10px;
+        }
+
+        .category-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-tab {
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.55);
+            white-space: nowrap;
+            cursor: pointer;
+            padding-bottom: 6px;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        .cat-tab.active {
+            color: #ffffff;
+        }
+
+        .cat-tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 3px;
+            background: var(--xos-accent);
+        }
+
+        /* Premium Smooth Scrolling App Drawer Grid */
+        .drawer-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: min-content;
+            gap: 20px 10px;
+            overflow-y: auto;
+            padding: 8px 4px 16px 4px;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            overscroll-behavior-y: contain;
+        }
+
+        .drawer-grid::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .drawer-grid::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+
+        /* Bottom Search Bar in App Drawer (English Text like Screenshot 2) */
+        .drawer-bottom-search {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid var(--xos-border);
+            border-radius: 50px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .drawer-bottom-search input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            width: 100%;
+            font-size: 15px;
+        }
+
+        .drawer-bottom-search input::placeholder {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        /* XOS 16 App Open/Close Zoom Animation Overlay */
+        .launch-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.96);
+            z-index: 150;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.35);
+            border-radius: 40px;
+            transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, border-radius 0.34s ease;
+        }
+
+        .launch-overlay.active {
+            opacity: 1;
+            transform: scale(1);
+            border-radius: 0;
+        }
+
+        /* Floating Theme Button */
+        .xos-fab {
+            position: fixed;
+            right: 0;
+            top: 44%;
+            background: var(--xos-glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--xos-border);
+            border-right: none;
+            padding: 12px 10px;
+            border-radius: 16px 0 0 16px;
+            color: var(--xos-accent);
+            cursor: pointer;
+            z-index: 40;
+            box-shadow: -4px 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 120;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: #161b26;
+            border: 1px solid var(--xos-border);
+            border-radius: 26px;
+            width: 100%;
+            max-width: 360px;
+            padding: 22px;
+            color: white;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-card h3 {
+            font-size: 17px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--xos-border);
+            background: #0f131c;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .file-upload-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 230, 118, 0.15);
+            border: 1px dashed var(--xos-accent);
+            color: var(--xos-accent);
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .preset-icons {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .preset-icon-opt {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: #232a3b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-save { background: var(--xos-accent); color: #000; }
+        .btn-cancel { background: #283042; color: white; }
+        .btn-reset { background: rgba(239, 68, 68, 0.2); color: #f87171; margin-top: 8px; width: 100%; }
+
+        .toast {
+            position: fixed;
+            bottom: 105px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.92);
+            color: var(--xos-accent);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: none;
+            z-index: 200;
+            border: 1px solid var(--xos-border);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="status-spacer"></div>
+
+    <!-- XOS 16 Widget Area -->
+    <div class="xos-widget-area">
+        <div class="clock-box">
+            <h1 id="main-clock">12<span class="accent-dot">:</span>00</h1>
+            <p id="main-date">মঙ্গলবার, ২৪ নভেম্বর</p>
+        </div>
+        <div class="xos-pill-widget">
+            <div class="pill-row" onclick="openDefaultLauncherSettings()">
+                <i class="fa-solid fa-bolt"></i>
+                <span>XOS 16</span>
+            </div>
+            <div class="pill-row" onclick="toggleDrawer(true)">
+                <i class="fa-solid fa-grip"></i>
+                <span>All Apps</span>
+            </div>
+            <div class="pill-row" onclick="changeWallpaper()">
+                <i class="fa-solid fa-image"></i>
+                <span>Wallpaper</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Search Bar -->
+    <div class="search-container">
+        <div class="xos-search">
+            <i class="fa-brands fa-google" style="color: var(--xos-accent);"></i>
+            <input type="text" id="google-search" placeholder="Search web..." onkeypress="handleSearch(event)">
+            <i class="fa-solid fa-wand-magic-sparkles" onclick="toggleEditMode()" style="color: var(--text-muted); cursor: pointer;"></i>
+        </div>
+    </div>
+
+    <!-- Multi-Page Horizontal Home Screen (3 Pages) -->
+    <div class="pages-viewport" id="pages-viewport">
+        <div class="pages-track" id="pages-track">
+            <div class="home-page" data-page="0" id="page-0"></div>
+            <div class="home-page" data-page="1" id="page-1"></div>
+            <div class="home-page" data-page="2" id="page-2"></div>
+        </div>
+    </div>
+
+    <!-- Page Indicator Dots -->
+    <div class="page-dots" id="page-dots">
+        <span class="dot active" onclick="goToPage(0)"></span>
+        <span class="dot" onclick="goToPage(1)"></span>
+        <span class="dot" onclick="goToPage(2)"></span>
+    </div>
+
+    <!-- Floating Icon Customizer Trigger -->
+    <div class="xos-fab" onclick="toggleEditMode()">
+        <i class="fa-solid fa-palette"></i>
+    </div>
+
+    <!-- Bottom Dock -->
+    <div class="dock-wrapper">
+        <div class="xos-dock" id="dock-grid"></div>
+    </div>
+
+    <!-- XOS 16 Full-Screen App Drawer -->
+    <div class="app-drawer" id="app-drawer">
+        <!-- App Category Options -->
+        <div class="category-bar" id="category-bar">
+            <div class="cat-tab active" onclick="selectCategory('All', this)">All</div>
+            <div class="cat-tab" onclick="selectCategory('Communication', this)">Communication</div>
+            <div class="cat-tab" onclick="selectCategory('Entertainment', this)">Entertainment</div>
+            <div class="cat-tab" onclick="selectCategory('Social', this)">Social</div>
+            <div class="cat-tab" onclick="selectCategory('Games', this)">Games</div>
+            <div class="cat-tab" onclick="selectCategory('Tools', this)">Tools</div>
+        </div>
+
+        <!-- Smooth Scrolling Drawer Grid -->
+        <div class="drawer-grid" id="drawer-grid"></div>
+
+        <!-- Bottom English Search Bar -->
+        <div class="drawer-bottom-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: rgba(255,255,255,0.75);"></i>
+            <input type="text" id="drawer-search-input" placeholder="Search for apps" oninput="filterDrawerApps()">
+            <i class="fa-solid fa-ellipsis-vertical" onclick="toggleEditMode()" style="color: rgba(255,255,255,0.75); padding: 0 4px; cursor: pointer;"></i>
+        </div>
+    </div>
+
+    <!-- App Launch Zoom Transition Layer -->
+    <div class="launch-overlay" id="launch-overlay"></div>
+
+    <!-- Icon Customizer Modal -->
+    <div class="modal-overlay" id="icon-modal">
+        <div class="modal-card">
+            <h3>
+                <span>আইকন কাস্টমাইজ করুন</span>
+                <i class="fa-solid fa-xmark" onclick="closeModal()" style="cursor:pointer; color:var(--text-muted);"></i>
+            </h3>
+
+            <div class="form-group">
+                <label>অ্যাপের নাম</label>
+                <input type="text" id="edit-name" placeholder="অ্যাপের নাম লিখুন">
+            </div>
+
+            <div class="form-group">
+                <label>হোমস্ক্রিন পেজ সিলেক্ট করুন (0, 1, 2 বা Dock)</label>
+                <div class="preset-icons">
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 0)">Page 1</div>
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 1)">Page 2</div>
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 2)">Page 3</div>
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('dock', 0)">Dock</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>গ্যালারি থেকে আইকন ছবি সিলেক্ট করুন</label>
+                <label class="file-upload-btn">
+                    <i class="fa-solid fa-upload"></i> ছবি আপলোড করুন (PNG/JPG)
+                    <input type="file" id="edit-image-file" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>অথবা XOS প্রিসেট আইকন বেছে নিন</label>
+                <div class="preset-icons">
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-brands fa-youtube', 'linear-gradient(135deg, #ff0000, #b91c1c)')"><i class="fa-brands fa-youtube"></i></div>
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-brands fa-facebook-f', 'linear-gradient(135deg, #1877f2, #1d4ed8)')"><i class="fa-brands fa-facebook-f"></i></div>
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-brands fa-whatsapp', 'linear-gradient(135deg, #25d366, #15803d)')"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-brands fa-instagram', 'linear-gradient(135deg, #f59e0b, #db2777)')"><i class="fa-brands fa-instagram"></i></div>
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-solid fa-gamepad', 'linear-gradient(135deg, #f97316, #ea580c)')"><i class="fa-solid fa-gamepad"></i></div>
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-solid fa-camera', 'linear-gradient(135deg, #f59e0b, #b45309)')"><i class="fa-solid fa-camera"></i></div>
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-solid fa-music', 'linear-gradient(135deg, #8b5cf6, #5b21b6)')"><i class="fa-solid fa-music"></i></div>
+                    <div class="preset-icon-opt" onclick="selectPreset('fa-solid fa-globe', 'linear-gradient(135deg, #3b82f6, #1d4ed8)')"><i class="fa-solid fa-globe"></i></div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-cancel" onclick="closeModal()">বাতিল</button>
+                <button class="btn btn-save" onclick="saveAppChanges()">সেভ করুন</button>
+            </div>
+            <button class="btn btn-reset" onclick="resetToSystemIcon()">ডিফল্ট সিস্টেম আইকনে ফিরিয়ে নিন</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const htmlStylizedApps = [
+            { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "linear-gradient(135deg, #ff0000, #b91c1c)", customImg: "", location: "home", page: 0, category: "Entertainment", order: 1 },
+            { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "linear-gradient(135deg, #1877f2, #1d4ed8)", customImg: "", location: "home", page: 0, category: "Social", order: 2 },
+            { id: "xtheme", name: "XTheme", url: "#", iconClass: "fa-solid fa-wand-magic-sparkles", bg: "linear-gradient(135deg, #00e676, #059669)", customImg: "", location: "home", page: 0, action: "edit", category: "Tools", order: 3 },
+            { id: "gamespace", name: "Game Space", url: "https://poki.com", iconClass: "fa-solid fa-gamepad", bg: "linear-gradient(135deg, #f97316, #ea580c)", customImg: "", location: "home", page: 0, category: "Games", order: 4 },
+            { id: "instagram", name: "Instagram", url: "https://instagram.com", iconClass: "fa-brands fa-instagram", bg: "linear-gradient(135deg, #f59e0b, #db2777, #7c3aed)", customImg: "", location: "home", page: 0, category: "Social", order: 5 },
+            { id: "whatsapp", name: "WhatsApp", url: "https://web.whatsapp.com", iconClass: "fa-brands fa-whatsapp", bg: "linear-gradient(135deg, #25d366, #15803d)", customImg: "", location: "home", page: 0, category: "Communication", order: 6 },
+            { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "linear-gradient(135deg, #334155, #0f172a)", customImg: "", location: "home", page: 0, category: "Tools", order: 7 },
+            { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "linear-gradient(135deg, #00e676, #0284c7)", customImg: "", location: "home", page: 0, action: "drawer", category: "Tools", order: 8 },
+
+            // Bottom Dock Apps
+            { id: "dock_phone", name: "Phone", url: "tel:", iconClass: "fa-solid fa-phone", bg: "linear-gradient(135deg, #00e676, #047857)", customImg: "", location: "dock", page: 0, category: "Communication", order: 1 },
+            { id: "dock_msg", name: "Messages", url: "sms:", iconClass: "fa-solid fa-comment-dots", bg: "linear-gradient(135deg, #38bdf8, #0284c7)", customImg: "", location: "dock", page: 0, category: "Communication", order: 2 },
+            { id: "dock_chrome", name: "Chrome", url: "https://google.com", iconClass: "fa-brands fa-chrome", bg: "linear-gradient(135deg, #facc15, #ef4444)", customImg: "", location: "dock", page: 0, category: "Tools", order: 3 },
+            { id: "dock_cam", name: "Camera", url: "#", iconClass: "fa-solid fa-camera", bg: "linear-gradient(135deg, #64748b, #1e293b)", customImg: "", location: "dock", page: 0, category: "Tools", order: 4 }
+        ];
+
+        let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta')) || {};
+        let apps = [];
+        let currentPage = 0;
+        let currentCategory = "All";
+        let isEditMode = false;
+        let currentEditingId = null;
+
+        // Temp Modal States
+        let tempCustomImg = "";
+        let tempIconClass = "";
+        let tempBg = "";
+        let tempLocation = "home";
+        let tempPage = 0;
+
+        function initApps() {
+            let systemApps = [];
+            if (window.AndroidBridge && typeof AndroidBridge.getInstalledApps === 'function') {
+                try {
+                    const raw = JSON.parse(AndroidBridge.getInstalledApps());
+                    systemApps = raw.map((item, idx) => ({
+                        id: item.packageName,
+                        packageName: item.packageName,
+                        name: item.name,
+                        systemIcon: item.systemIcon,
+                        customImg: "",
+                        iconClass: "",
+                        bg: "transparent",
+                        location: idx < 16 ? "home" : "drawer",
+                        page: idx < 8 ? 1 : 2,
+                        category: item.category || "Tools",
+                        order: 100 + idx
+                    }));
+                } catch (e) {}
+            }
+
+            // Merge HTML style icons with real installed packages
+            const mergedMap = new Map();
+            htmlStylizedApps.forEach(a => mergedMap.set(a.id, { ...a }));
+
+            systemApps.forEach(sys => {
+                // Match known HTML stylized icons to real packages if installed
+                const lower = sys.packageName.toLowerCase();
+                if (lower.includes("youtube") && !lower.includes("music")) {
+                    mergedMap.get("youtube").packageName = sys.packageName;
+                    mergedMap.get("youtube").systemIcon = sys.systemIcon;
+                } else if (lower.includes("facebook.katana")) {
+                    mergedMap.get("facebook").packageName = sys.packageName;
+                    mergedMap.get("facebook").systemIcon = sys.systemIcon;
+                } else if (lower.includes("instagram")) {
+                    mergedMap.get("instagram").packageName = sys.packageName;
+                    mergedMap.get("instagram").systemIcon = sys.systemIcon;
+                } else if (lower.includes("whatsapp")) {
+                    mergedMap.get("whatsapp").packageName = sys.packageName;
+                    mergedMap.get("whatsapp").systemIcon = sys.systemIcon;
+                } else if (lower.includes("dialer") || lower.includes("contacts")) {
+                    if (!mergedMap.get("dock_phone").packageName) {
+                        mergedMap.get("dock_phone").packageName = sys.packageName;
+                    }
+                    mergedMap.set(sys.id, sys);
+                } else if (lower.includes("mms") || lower.includes("messaging")) {
+                    if (!mergedMap.get("dock_msg").packageName) {
+                        mergedMap.get("dock_msg").packageName = sys.packageName;
+                    }
+                    mergedMap.set(sys.id, sys);
+                } else if (lower.includes("chrome")) {
+                    mergedMap.get("dock_chrome").packageName = sys.packageName;
+                } else if (lower.includes("camera")) {
+                    mergedMap.get("dock_cam").packageName = sys.packageName;
+                } else {
+                    mergedMap.set(sys.id, sys);
+                }
+            });
+
+            apps = Array.from(mergedMap.values()).map(app => {
+                if (savedMeta[app.id]) {
+                    return { ...app, ...savedMeta[app.id] };
+                }
+                return app;
+            });
+
+            renderAll();
+        }
+
+        function createAppElement(app, context) {
+            const appEl = document.createElement('div');
+            appEl.className = 'app-item';
+            appEl.dataset.id = app.id;
+
+            let iconHtml = '';
+            let iconBg = app.bg || 'transparent';
+
+            if (app.customImg) {
+                iconHtml = `<img src="${app.customImg}" alt="${app.name}">`;
+                iconBg = 'transparent';
+            } else if (app.iconClass) {
+                iconHtml = `<i class="${app.iconClass}"></i>`;
+            } else if (app.systemIcon) {
+                iconHtml = `<img src="${app.systemIcon}" alt="${app.name}">`;
+                iconBg = 'transparent';
+            } else {
+                iconHtml = `<i class="fa-solid fa-cube"></i>`;
+                iconBg = 'linear-gradient(135deg, #00e676, #0284c7)';
+            }
+
+            appEl.innerHTML = `
+                <div class="app-icon" style="background: ${iconBg};">
+                    ${iconHtml}
+                </div>
+                <span class="app-name">${app.name}</span>
+            `;
+
+            setupLongPressAndDrag(appEl, app, context);
+            return appEl;
+        }
+
+        /* 1-Second Long Press to Move / Reorder & Tap to Launch */
+        function setupLongPressAndDrag(el, app, context) {
+            let pressTimer = null;
+            let isDragging = false;
+            let startX = 0, startY = 0;
+
+            el.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 1) return;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+
+                pressTimer = setTimeout(() => {
+                    isDragging = true;
+                    el.classList.add('dragging');
+                    if (navigator.vibrate) navigator.vibrate(45);
+                    showToast("অ্যাপ মুভ করুন অথবা ছেড়ে দিয়ে এডিট করুন");
+                }, 1000); // Exact 1 second long press
+            }, { passive: true });
+
+            el.addEventListener('touchmove', (e) => {
+                const dx = e.touches[0].clientX - startX;
+                const dy = e.touches[0].clientY - startY;
+
+                if (!isDragging && (Math.abs(dx) > 12 || Math.abs(dy) > 12)) {
+                    clearTimeout(pressTimer);
+                    return;
+                }
+
+                if (isDragging) {
+                    e.stopPropagation();
+                    el.style.transform = `translate(${dx}px, ${dy}px) scale(1.18)`;
+
+                    // Auto switch home page if dragged to screen edges
+                    const touchX = e.touches[0].clientX;
+                    if (context === 'home') {
+                        if (touchX > window.innerWidth - 35 && currentPage < 2) {
+                            goToPage(currentPage + 1);
+                            app.page = currentPage;
+                        } else if (touchX < 35 && currentPage > 0) {
+                            goToPage(currentPage - 1);
+                            app.page = currentPage;
+                        }
+                    }
+                }
+            }, { passive: false });
+
+            el.addEventListener('touchend', (e) => {
+                clearTimeout(pressTimer);
+
+                if (isDragging) {
+                    isDragging = false;
+                    el.classList.remove('dragging');
+                    el.style.transform = '';
+
+                    const endTouch = e.changedTouches[0];
+                    // If barely moved after 1s hold, open Icon Customizer Modal
+                    if (Math.abs(endTouch.clientX - startX) < 15 && Math.abs(endTouch.clientY - startY) < 15) {
+                        openEditModal(app);
+                        return;
+                    }
+
+                    // Find target app under finger to swap/reorder
+                    el.style.visibility = 'hidden';
+                    const targetEl = document.elementFromPoint(endTouch.clientX, endTouch.clientY)?.closest('.app-item');
+                    el.style.visibility = 'visible';
+
+                    if (targetEl && targetEl.dataset.id !== app.id) {
+                        const targetApp = apps.find(a => a.id === targetEl.dataset.id);
+                        if (targetApp) {
+                            const tempOrder = app.order;
+                            app.order = targetApp.order;
+                            targetApp.order = tempOrder;
+                            app.location = targetApp.location;
+                            app.page = targetApp.page;
+                            saveMetaForApp(targetApp);
+                        }
+                    } else if (context === 'drawer') {
+                        // Add drawer app to current home page
+                        app.location = 'home';
+                        app.page = currentPage;
+                        toggleDrawer(false);
+                        showToast(`${app.name} হোমস্ক্রিনে যোগ হয়েছে`);
+                    }
+
+                    saveMetaForApp(app);
+                    renderAll();
+                } else {
+                    const dx = Math.abs(e.changedTouches[0].clientX - startX);
+                    const dy = Math.abs(e.changedTouches[0].clientY - startY);
+                    if (dx < 10 && dy < 10) {
+                        handleAppClick(app, el);
+                    }
+                }
+            });
+        }
+
+        function handleAppClick(app, el) {
+            if (isEditMode || app.action === 'edit') {
+                openEditModal(app);
+                return;
+            }
+            if (app.action === 'drawer') {
+                toggleDrawer(true);
+                return;
+            }
+
+            // XOS 16 Smooth Zoom-In Launch Animation
+            const rect = el.querySelector('.app-icon').getBoundingClientRect();
+            const overlay = document.getElementById('launch-overlay');
+            overlay.style.transformOrigin = `${rect.left + rect.width / 2}px ${rect.top + rect.height / 2}px`;
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                if (app.packageName && window.AndroidBridge) {
+                    AndroidBridge.launchApp(
+                        app.packageName,
+                        Math.round(rect.left),
+                        Math.round(rect.top),
+                        Math.round(rect.width),
+                        Math.round(rect.height)
+                    );
+                } else if (app.url && app.url !== '#') {
+                    window.location.href = app.url;
+                } else {
+                    showToast(`${app.name} ওপেন হচ্ছে...`);
+                }
+
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                }, 380);
+            }, 130);
+        }
+
+        function renderAll() {
+            const pages = [
+                document.getElementById('page-0'),
+                document.getElementById('page-1'),
+                document.getElementById('page-2')
+            ];
+            const dock = document.getElementById('dock-grid');
+
+            pages.forEach(p => p.innerHTML = '');
+            dock.innerHTML = '';
+
+            const sortedByOrder = [...apps].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            sortedByOrder.forEach(app => {
+                if (app.location === 'home') {
+                    const pIdx = Math.min(Math.max(app.page || 0, 0), 2);
+                    pages[pIdx].appendChild(createAppElement(app, 'home'));
+                } else if (app.location === 'dock') {
+                    dock.appendChild(createAppElement(app, 'dock'));
+                }
+            });
+
+            renderDrawer();
+        }
+
+        function renderDrawer() {
+            const drawerGrid = document.getElementById('drawer-grid');
+            const query = document.getElementById('drawer-search-input').value.trim().toLowerCase();
+            drawerGrid.innerHTML = '';
+
+            const sortedAlpha = [...apps]
+                .filter(a => a.action !== 'drawer')
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedAlpha.forEach(app => {
+                const matchCat = currentCategory === 'All' || app.category === currentCategory;
+                const matchSearch = app.name.toLowerCase().includes(query);
+                if (matchCat && matchSearch) {
+                    drawerGrid.appendChild(createAppElement(app, 'drawer'));
+                }
+            });
+        }
+
+        /* Category & Search Controls */
+        function selectCategory(cat, tabEl) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+            tabEl.classList.add('active');
+            renderDrawer();
+        }
+
+        function filterDrawerApps() {
+            renderDrawer();
+        }
+
+        /* Horizontal Multi-Page Swipe & Vertical Drawer Swipe */
+        const viewport = document.getElementById('pages-viewport');
+        const track = document.getElementById('pages-track');
+        let swipeStartX = 0, swipeStartY = 0, isHorizontalSwipe = false;
+
+        viewport.addEventListener('touchstart', (e) => {
+            swipeStartX = e.touches[0].clientX;
+            swipeStartY = e.touches[0].clientY;
+            isHorizontalSwipe = false;
+            track.style.transition = 'none';
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', (e) => {
+            if (document.querySelector('.app-item.dragging')) return;
+            const dx = e.touches[0].clientX - swipeStartX;
+            const dy = e.touches[0].clientY - swipeStartY;
+
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
+                isHorizontalSwipe = true;
+                const baseOffset = -currentPage * window.innerWidth;
+                track.style.transform = `translateX(${baseOffset + dx}px)`;
+            }
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', (e) => {
+            track.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1)';
+            const dx = e.changedTouches[0].clientX - swipeStartX;
+            const dy = e.changedTouches[0].clientY - swipeStartY;
+
+            if (isHorizontalSwipe) {
+                if (dx < -55 && currentPage < 2) {
+                    goToPage(currentPage + 1);
+                } else if (dx > 55 && currentPage > 0) {
+                    goToPage(currentPage - 1);
+                } else {
+                    goToPage(currentPage);
+                }
+            } else if (dy < -75 && Math.abs(dx) < 50) {
+                toggleDrawer(true);
+            }
+        }, { passive: true });
+
+        function goToPage(pageIdx) {
+            currentPage = pageIdx;
+            track.style.transform = `translateX(-${currentPage * 100}vw)`;
+            document.querySelectorAll('.dot').forEach((d, idx) => {
+                d.classList.toggle('active', idx === currentPage);
+            });
+        }
+
+        /* XOS 16 Smooth App Drawer Open/Close */
+        function toggleDrawer(open) {
+            const drawer = document.getElementById('app-drawer');
+            if (open) {
+                drawer.classList.add('open');
+            } else {
+                drawer.classList.remove('open');
+                document.getElementById('drawer-search-input').value = '';
+                renderDrawer();
+            }
+        }
+
+        let drawerTouchY = 0;
+        const appDrawerEl = document.getElementById('app-drawer');
+        appDrawerEl.addEventListener('touchstart', e => {
+            drawerTouchY = e.touches[0].clientY;
+        }, { passive: true });
+
+        appDrawerEl.addEventListener('touchend', e => {
+            const diffY = e.changedTouches[0].clientY - drawerTouchY;
+            if (diffY > 85 && document.getElementById('drawer-grid').scrollTop <= 0) {
+                toggleDrawer(false);
+            }
+        }, { passive: true });
+
+        function onAndroidBack() {
+            if (document.getElementById('icon-modal').style.display === 'flex') {
+                closeModal();
+            } else if (document.getElementById('app-drawer').classList.contains('open')) {
+                toggleDrawer(false);
+            } else if (isEditMode) {
+                toggleEditMode();
+            } else if (currentPage !== 0) {
+                goToPage(0);
+            }
+        }
+
+        /* Icon Customization & Edit Mode */
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            document.body.classList.toggle('edit-mode', isEditMode);
+            showToast(isEditMode ? "এডিট মোড চালু: অ্যাপে ট্যাপ করে আইকন বদলান" : "এডিট মোড বন্ধ হয়েছে");
+        }
+
+        function openEditModal(app) {
+            currentEditingId = app.id;
+            tempCustomImg = app.customImg || "";
+            tempIconClass = app.iconClass || "";
+            tempBg = app.bg || "transparent";
+            tempLocation = app.location || "home";
+            tempPage = app.page || 0;
+
+            document.getElementById('edit-name').value = app.name;
+            document.getElementById('icon-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('icon-modal').style.display = 'none';
+        }
+
+        function assignLocation(loc, page) {
+            tempLocation = loc;
+            tempPage = page;
+            showToast(loc === 'dock' ? "Dock সিলেক্ট হয়েছে" : `Home Page ${page + 1} সিলেক্ট হয়েছে`);
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 144;
+                    canvas.height = 144;
+                    canvas.getContext('2d').drawImage(img, 0, 0, 144, 144);
+                    tempCustomImg = canvas.toDataURL('image/png');
+                    tempIconClass = "";
+                    showToast("নতুন আইকন ছবি সিলেক্ট হয়েছে!");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function selectPreset(iconClass, bg) {
+            tempCustomImg = "";
+            tempIconClass = iconClass;
+            tempBg = bg;
+            showToast("XOS প্রিসেট আইকন সিলেক্ট হয়েছে");
+        }
+
+        function saveAppChanges() {
+            const newName = document.getElementById('edit-name').value.trim();
+            apps = apps.map(app => {
+                if (app.id === currentEditingId) {
+                    const updated = {
+                        ...app,
+                        name: newName || app.name,
+                        customImg: tempCustomImg,
+                        iconClass: tempIconClass,
+                        bg: tempBg,
+                        location: tempLocation,
+                        page: tempPage
+                    };
+                    saveMetaForApp(updated);
+                    return updated;
+                }
+                return app;
+            });
+
+            renderAll();
+            closeModal();
+            showToast("আইকন ও সেটিংস সেভ হয়েছে!");
+        }
+
+        function resetToSystemIcon() {
+            apps = apps.map(app => {
+                if (app.id === currentEditingId) {
+                    const updated = {
+                        ...app,
+                        customImg: "",
+                        iconClass: "",
+                        bg: "transparent"
+                    };
+                    saveMetaForApp(updated);
+                    return updated;
+                }
+                return app;
+            });
+            renderAll();
+            closeModal();
+            showToast("ডিফল্ট সিস্টেম আইকন রিস্টোর হয়েছে");
+        }
+
+        function saveMetaForApp(app) {
+            savedMeta[app.id] = {
+                name: app.name,
+                customImg: app.customImg,
+                iconClass: app.iconClass,
+                bg: app.bg,
+                location: app.location,
+                page: app.page,
+                order: app.order
+            };
+            localStorage.setItem('xos16_app_meta', JSON.stringify(savedMeta));
+        }
+
+        function changeWallpaper() {
+            if (window.AndroidBridge) {
+                AndroidBridge.openWallpaperPicker();
+            } else {
+                showToast("Android Wallpaper Picker ওপেন হচ্ছে...");
+            }
+        }
+
+        function openDefaultLauncherSettings() {
+            if (window.AndroidBridge) {
+                AndroidBridge.openHomeSettings();
+            } else {
+                showToast("Default Home App সেটিংস ওপেন হচ্ছে...");
+            }
+        }
+
+        function handleSearch(e) {
+            if (e.key === 'Enter') {
+                const q = e.target.value.trim();
+                if (q) window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours() % 12 || 12;
+            let minutes = now.getMinutes();
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('main-clock').innerHTML = `${hours}<span class="accent-dot">:</span>${minutes}`;
+            document.getElementById('main-date').innerText = now.toLocaleDateString('bn-BD', { weekday: 'long', day: 'numeric', month: 'long' });
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 2400);
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+        initApps();
+    </script>
+</body>
+</html>
