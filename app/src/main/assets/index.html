@@ -8,8 +8,8 @@
     <style>
         :root {
             --xos-accent: #00e676;
-            --xos-glass: rgba(22, 26, 35, 0.54);
-            --xos-border: rgba(255, 255, 255, 0.18);
+            --xos-glass: rgba(22, 26, 35, 0.56);
+            --xos-border: rgba(255, 255, 255, 0.16);
             --text-main: #ffffff;
             --text-muted: #cbd5e1;
         }
@@ -39,7 +39,7 @@
             content: "";
             position: fixed;
             inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.03) 48%, rgba(0,0,0,0.32) 100%);
+            background: linear-gradient(180deg, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0.05) 48%, rgba(0,0,0,0.34) 100%);
             pointer-events: none;
             z-index: 0;
         }
@@ -47,7 +47,7 @@
         /* Double-Sized Freely Draggable Clock Widget */
         .clock-widget {
             position: fixed;
-            top: 64px;
+            top: 84px;
             left: 24px;
             z-index: 25;
             padding: 8px 12px;
@@ -93,7 +93,7 @@
             pointer-events: none;
         }
 
-        /* Multi-Page Horizontal Home Screen Container */
+        /* 4-Page Track: [0: XOS 16 Zero-Screen, 1: Clean Time Page, 2: Apps Page 1, 3: Apps Page 2] */
         .pages-viewport {
             flex: 1;
             width: 100vw;
@@ -104,17 +104,17 @@
 
         .pages-track {
             display: flex;
-            width: 300vw;
+            width: 400vw;
             height: 100%;
             transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
-            transform: translate3d(0, 0, 0);
+            transform: translate3d(-100vw, 0, 0);
             will-change: transform;
         }
 
         .home-page {
             width: 100vw;
             height: 100%;
-            padding: 46px 18px 10px 18px;
+            padding: 88px 18px 12px 18px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: min-content;
@@ -122,7 +122,275 @@
             align-content: start;
         }
 
-        /* Exact Reference Screenshot Icon Size (58px / ~15.8% screen width) */
+        /* XOS 16 Left Zero-Screen Page */
+        .zero-screen-page {
+            width: 100vw;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 46px 16px 24px 16px;
+            background: rgba(18, 22, 30, 0.62);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .zero-screen-page::-webkit-scrollbar {
+            display: none;
+        }
+
+        .zs-search-bar {
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid var(--xos-border);
+            border-radius: 50px;
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .zs-search-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 16px;
+        }
+
+        .zs-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 2px;
+        }
+
+        .zs-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .zs-plus-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .zs-plus-btn::after {
+            content: "";
+            position: absolute;
+            top: 4px;
+            right: 5px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .zs-hero-banner {
+            background: linear-gradient(125deg, #f8fafc 0%, #dbeafe 45%, #e0e7ff 100%);
+            border-radius: 26px;
+            padding: 20px;
+            min-height: 158px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+        }
+
+        .zs-hero-logo {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #0f172a;
+        }
+
+        .zs-hero-logo span {
+            color: #2563eb;
+        }
+
+        .zs-hero-badges {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .zs-badge-box {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #ffffff;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+        }
+
+        .zs-banner-dots {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .zs-banner-dots span {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.28);
+        }
+
+        .zs-banner-dots span.active {
+            height: 12px;
+            border-radius: 8px;
+            background: #0f172a;
+        }
+
+        .zs-two-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .zs-card {
+            background: rgba(30, 36, 48, 0.72);
+            border: 1px solid var(--xos-border);
+            border-radius: 26px;
+            padding: 18px;
+            min-height: 162px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.16s ease;
+        }
+
+        .zs-card:active {
+            transform: scale(0.97);
+        }
+
+        .zs-storage-pct {
+            font-size: 34px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.05;
+        }
+
+        .zs-storage-pct span {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .zs-storage-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .zs-storage-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 14px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .zs-more-card {
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .zs-more-card i {
+            font-size: 30px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .zs-feed-card {
+            background: rgba(30, 36, 48, 0.72);
+            border: 1px solid var(--xos-border);
+            border-radius: 24px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .zs-feed-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .zs-feed-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .zs-go-btn {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            border: none;
+            border-radius: 18px;
+            padding: 7px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .zs-thumb-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .zs-thumb {
+            height: 68px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #ffffff;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zs-new-tag {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 6px;
+        }
+
+        /* Exact Reference Screenshot Icon Size (58px) */
         .app-item {
             display: flex;
             flex-direction: column;
@@ -178,7 +446,7 @@
             pointer-events: none;
         }
 
-        /* Page Indicator Dots */
+        /* Page Indicator Dots (3 Main Dots: Zero/Time, Apps 1, Apps 2) */
         .page-dots {
             display: flex;
             justify-content: center;
@@ -202,7 +470,7 @@
             background: #ffffff;
         }
 
-        /* Bottom Dock Box Matched to Reference Screenshot */
+        /* Bottom Dock Box */
         .dock-wrapper {
             padding: 4px 16px 18px 16px;
             z-index: 10;
@@ -246,7 +514,7 @@
             transform: translate3d(0, 100%, 0);
             opacity: 0;
             pointer-events: none;
-            transition: transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.16s ease;
+            transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.14s ease;
             padding: 46px 16px 18px 16px;
             will-change: transform, opacity;
         }
@@ -298,6 +566,7 @@
             background: var(--xos-accent);
         }
 
+        /* Ultra-Smooth High-Refresh App List Scroll */
         .drawer-grid {
             flex: 1;
             display: grid;
@@ -308,6 +577,15 @@
             padding: 10px 4px 16px 4px;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
+            contain: layout style paint;
+            transform: translateZ(0);
+            will-change: scroll-position;
+        }
+
+        .drawer-grid .app-item {
+            content-visibility: auto;
+            contain-intrinsic-size: 58px 82px;
+            transform: translateZ(0);
         }
 
         .drawer-grid::-webkit-scrollbar {
@@ -547,20 +825,116 @@
         <p id="main-date">Tuesday, November 24</p>
     </div>
 
-    <!-- Multi-Page Horizontal Home Screen (Page 1 Clean, Apps on Page 2 & 3) -->
+    <!-- Track Pages:
+         index 0 = Left Zero-Screen (XOS 16 Cards)
+         index 1 = Clean Time Page (Default Start)
+         index 2 = Apps Page 1
+         index 3 = Apps Page 2 -->
     <div class="pages-viewport" id="pages-viewport">
         <div class="pages-track" id="pages-track">
-            <div class="home-page" data-page="0" id="page-0"></div>
+            <!-- Index 0: XOS 16 Zero-Screen Page -->
+            <div class="zero-screen-page" id="zero-screen-page">
+                <div class="zs-search-bar" onclick="openDrawerSearch()">
+                    <div class="zs-search-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Search</span>
+                    </div>
+                    <i class="fa-solid fa-ellipsis-vertical" style="color: rgba(255,255,255,0.8);"></i>
+                </div>
+
+                <div class="zs-section-header">
+                    <span class="zs-section-title">My Services</span>
+                    <div class="zs-plus-btn" onclick="showToast('Add widget / service')">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                </div>
+
+                <div class="zs-hero-banner" onclick="cycleHeroBanner()">
+                    <div class="zs-hero-logo" id="zs-hero-title">X<span>O</span>S 16</div>
+                    <div class="zs-hero-badges">
+                        <div class="zs-badge-box" style="background:#f59e0b;"><i class="fa-solid fa-paintbrush"></i></div>
+                        <div class="zs-badge-box" style="background:#2563eb;"><i class="fa-solid fa-cube"></i></div>
+                        <div class="zs-badge-box" style="background:#6366f1;"><i class="fa-solid fa-mountain-sun"></i></div>
+                    </div>
+                    <div class="zs-banner-dots" id="zs-banner-dots">
+                        <span class="active"></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="zs-two-cards">
+                    <div class="zs-card" onclick="showToast('Storage: 39.84 GB / 128 GB used')">
+                        <div>
+                            <div class="zs-storage-pct">31<span>%</span></div>
+                            <div class="zs-storage-sub">39.84 GB/128 GB</div>
+                        </div>
+                        <div class="zs-storage-bottom">
+                            <span>Storage</span>
+                            <i class="fa-solid fa-broom" style="color:#3b82f6; font-size:20px;"></i>
+                        </div>
+                    </div>
+
+                    <div class="zs-card zs-more-card" onclick="goToPage(2)">
+                        <i class="fa-solid fa-plus"></i>
+                        <span style="font-size:16px; font-weight:600;">More</span>
+                    </div>
+                </div>
+
+                <div class="zs-feed-card">
+                    <div class="zs-feed-top">
+                        <div class="zs-feed-title">
+                            <span class="zs-badge-box" style="width:26px; height:26px; border-radius:8px; font-size:13px; background:#ea580c;"><i class="fa-solid fa-store"></i></span>
+                            <span>Top Charts</span>
+                        </div>
+                        <button class="zs-go-btn" onclick="goToPage(2)">Go</button>
+                    </div>
+                    <div style="font-size:13px; color:var(--text-muted);">Explore fun apps today</div>
+                    <div class="zs-thumb-row">
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#f59e0b,#ef4444);" onclick="goToPage(2)"><i class="fa-solid fa-music"></i></div>
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#334155,#0f172a);" onclick="goToPage(2)"><i class="fa-solid fa-keyboard"></i></div>
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#f97316,#eab308);" onclick="goToPage(2)"><i class="fa-solid fa-cat"></i></div>
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);" onclick="goToPage(2)">
+                            <span class="zs-new-tag">New</span>
+                            <i class="fa-solid fa-sparkles"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="zs-feed-card">
+                    <div class="zs-feed-top">
+                        <div class="zs-feed-title">
+                            <span class="zs-badge-box" style="width:26px; height:26px; border-radius:8px; font-size:13px; background:#f97316;"><i class="fa-solid fa-gamepad"></i></span>
+                            <span>Popular Games</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); cursor:pointer;" onclick="goToPage(2)"></i>
+                    </div>
+                    <div class="zs-thumb-row">
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#dc2626,#7c2d12);" onclick="goToPage(2)"><i class="fa-solid fa-truck-monster"></i></div>
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#16a34a,#15803d);" onclick="goToPage(2)"><i class="fa-solid fa-carrot"></i></div>
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#b45309,#451a03);" onclick="goToPage(2)"><i class="fa-solid fa-circle-dot"></i></div>
+                        <div class="zs-thumb" style="background:linear-gradient(135deg,#ea580c,#b91c1c);" onclick="goToPage(2)"><i class="fa-solid fa-pizza-slice"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Index 1: Clean Time Page -->
             <div class="home-page" data-page="1" id="page-1"></div>
+
+            <!-- Index 2: Apps Page 1 -->
             <div class="home-page" data-page="2" id="page-2"></div>
+
+            <!-- Index 3: Apps Page 2 -->
+            <div class="home-page" data-page="3" id="page-3"></div>
         </div>
     </div>
 
     <!-- Page Indicator Dots -->
     <div class="page-dots" id="page-dots">
-        <span class="dot active" onclick="goToPage(0)"></span>
-        <span class="dot" onclick="goToPage(1)"></span>
+        <span class="dot active" onclick="goToPage(1)"></span>
         <span class="dot" onclick="goToPage(2)"></span>
+        <span class="dot" onclick="goToPage(3)"></span>
     </div>
 
     <!-- Bottom Dock -->
@@ -625,10 +999,10 @@
             <div class="form-group">
                 <label>Move to Page / Dock</label>
                 <div class="preset-icons">
-                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 0)">Page 1</div>
-                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 1)">Page 2</div>
-                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 2)">Page 3</div>
-                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('dock', 0)">Dock</div>
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 1)">Time Page</div>
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 2)">Apps 1</div>
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('home', 3)">Apps 2</div>
+                    <div class="preset-icon-opt" style="width:auto; padding:0 12px; font-size:12px;" onclick="assignLocation('dock', 1)">Dock</div>
                 </div>
             </div>
 
@@ -665,37 +1039,42 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        /* Default Apps Placed on Page 2 (page: 1), Keeping Page 1 (page: 0) Empty for Time & Wallpaper */
+        /* Track indices:
+           0 = Left Zero-Screen (XOS 16 Cards)
+           1 = Clean Time Page (Empty default)
+           2 = Apps Page 1
+           3 = Apps Page 2 */
         const htmlStylizedApps = [
-            { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "linear-gradient(135deg, #ff0000, #b91c1c)", customImg: "", location: "home", page: 1, category: "Entertainment", order: 1 },
-            { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "linear-gradient(135deg, #1877f2, #1d4ed8)", customImg: "", location: "home", page: 1, category: "Social", order: 2 },
-            { id: "xtheme", name: "XTheme", url: "#", iconClass: "fa-solid fa-wand-magic-sparkles", bg: "linear-gradient(135deg, #00e676, #059669)", customImg: "", location: "home", page: 1, action: "edit", category: "Tools", order: 3 },
-            { id: "gamespace", name: "Game Space", url: "https://poki.com", iconClass: "fa-solid fa-gamepad", bg: "linear-gradient(135deg, #f97316, #ea580c)", customImg: "", location: "home", page: 1, category: "Games", order: 4 },
-            { id: "instagram", name: "Instagram", url: "https://instagram.com", iconClass: "fa-brands fa-instagram", bg: "linear-gradient(135deg, #f59e0b, #db2777, #7c3aed)", customImg: "", location: "home", page: 1, category: "Social", order: 5 },
-            { id: "whatsapp", name: "WhatsApp", url: "https://web.whatsapp.com", iconClass: "fa-brands fa-whatsapp", bg: "linear-gradient(135deg, #25d366, #15803d)", customImg: "", location: "home", page: 1, category: "Communication", order: 6 },
-            { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "linear-gradient(135deg, #334155, #0f172a)", customImg: "", location: "home", page: 1, category: "Tools", order: 7 },
-            { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "linear-gradient(135deg, #00e676, #0284c7)", customImg: "", location: "home", page: 1, action: "drawer", category: "Tools", order: 8 },
+            { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "linear-gradient(135deg, #ff0000, #b91c1c)", customImg: "", location: "home", page: 2, category: "Entertainment", order: 1 },
+            { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "linear-gradient(135deg, #1877f2, #1d4ed8)", customImg: "", location: "home", page: 2, category: "Social", order: 2 },
+            { id: "xtheme", name: "XTheme", url: "#", iconClass: "fa-solid fa-wand-magic-sparkles", bg: "linear-gradient(135deg, #00e676, #059669)", customImg: "", location: "home", page: 2, action: "edit", category: "Tools", order: 3 },
+            { id: "gamespace", name: "Game Space", url: "https://poki.com", iconClass: "fa-solid fa-gamepad", bg: "linear-gradient(135deg, #f97316, #ea580c)", customImg: "", location: "home", page: 2, category: "Games", order: 4 },
+            { id: "instagram", name: "Instagram", url: "https://instagram.com", iconClass: "fa-brands fa-instagram", bg: "linear-gradient(135deg, #f59e0b, #db2777, #7c3aed)", customImg: "", location: "home", page: 2, category: "Social", order: 5 },
+            { id: "whatsapp", name: "WhatsApp", url: "https://web.whatsapp.com", iconClass: "fa-brands fa-whatsapp", bg: "linear-gradient(135deg, #25d366, #15803d)", customImg: "", location: "home", page: 2, category: "Communication", order: 6 },
+            { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "linear-gradient(135deg, #334155, #0f172a)", customImg: "", location: "home", page: 2, category: "Tools", order: 7 },
+            { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "linear-gradient(135deg, #00e676, #0284c7)", customImg: "", location: "home", page: 2, action: "drawer", category: "Tools", order: 8 },
 
-            { id: "dock_phone", name: "Phone", url: "tel:", iconClass: "fa-solid fa-phone", bg: "linear-gradient(135deg, #00e676, #047857)", customImg: "", location: "dock", page: 0, category: "Communication", order: 1 },
-            { id: "dock_msg", name: "Messages", url: "sms:", iconClass: "fa-solid fa-comment-dots", bg: "linear-gradient(135deg, #38bdf8, #0284c7)", customImg: "", location: "dock", page: 0, category: "Communication", order: 2 },
-            { id: "dock_chrome", name: "Chrome", url: "https://google.com", iconClass: "fa-brands fa-chrome", bg: "linear-gradient(135deg, #facc15, #ef4444)", customImg: "", location: "dock", page: 0, category: "Tools", order: 3 },
-            { id: "dock_cam", name: "Camera", url: "#", iconClass: "fa-solid fa-camera", bg: "linear-gradient(135deg, #64748b, #1e293b)", customImg: "", location: "dock", page: 0, category: "Tools", order: 4 }
+            { id: "dock_phone", name: "Phone", url: "tel:", iconClass: "fa-solid fa-phone", bg: "linear-gradient(135deg, #00e676, #047857)", customImg: "", location: "dock", page: 1, category: "Communication", order: 1 },
+            { id: "dock_msg", name: "Messages", url: "sms:", iconClass: "fa-solid fa-comment-dots", bg: "linear-gradient(135deg, #38bdf8, #0284c7)", customImg: "", location: "dock", page: 1, category: "Communication", order: 2 },
+            { id: "dock_chrome", name: "Chrome", url: "https://google.com", iconClass: "fa-brands fa-chrome", bg: "linear-gradient(135deg, #facc15, #ef4444)", customImg: "", location: "dock", page: 1, category: "Tools", order: 3 },
+            { id: "dock_cam", name: "Camera", url: "#", iconClass: "fa-solid fa-camera", bg: "linear-gradient(135deg, #64748b, #1e293b)", customImg: "", location: "dock", page: 1, category: "Tools", order: 4 }
         ];
 
-        let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta_v2')) || {};
+        let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta_v3')) || {};
         let apps = [];
-        let currentPage = 0;
+        let currentPage = 1; // 1 = Clean Time Page
         let currentCategory = "All";
         let currentEditingId = null;
         let selectedContextApp = null;
         let drawerBuiltOnce = false;
         let isAnyAppDragging = false;
+        let bannerIdx = 0;
 
         let tempCustomImg = "";
         let tempIconClass = "";
         let tempBg = "";
         let tempLocation = "home";
-        let tempPage = 1;
+        let tempPage = 2;
 
         /* Free Drag & Drop Clock Widget Anywhere on Screen */
         (function setupClockDrag() {
@@ -740,7 +1119,7 @@
                 const maxTop = window.innerHeight - rect.height;
 
                 newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-                newTop = Math.max(24, Math.min(newTop, maxTop));
+                newTop = Math.max(36, Math.min(newTop, maxTop));
 
                 clockEl.style.left = newLeft + 'px';
                 clockEl.style.top = newTop + 'px';
@@ -761,6 +1140,27 @@
             });
         })();
 
+        function cycleHeroBanner() {
+            const titles = [
+                'X<span>O</span>S 16',
+                'X<span>O</span>S Smart',
+                'X<span>O</span>S Boost',
+                'X<span>O</span>S AI'
+            ];
+            bannerIdx = (bannerIdx + 1) % titles.length;
+            document.getElementById('zs-hero-title').innerHTML = titles[bannerIdx];
+            const dots = document.querySelectorAll('#zs-banner-dots span');
+            dots.forEach((d, i) => d.classList.toggle('active', i === bannerIdx));
+        }
+
+        function openDrawerSearch() {
+            toggleDrawer(true);
+            setTimeout(() => {
+                const inp = document.getElementById('drawer-search-input');
+                if (inp) inp.focus();
+            }, 120);
+        }
+
         function refreshInstalledApps() {
             let systemApps = [];
             if (window.AndroidBridge && typeof AndroidBridge.getInstalledApps === 'function') {
@@ -775,7 +1175,7 @@
                         iconClass: "",
                         bg: "transparent",
                         location: idx < 24 ? "home" : "drawer",
-                        page: idx < 12 ? 1 : 2,
+                        page: idx < 12 ? 2 : 3,
                         category: item.category || "Tools",
                         order: 100 + idx
                     }));
@@ -894,23 +1294,23 @@
                     el.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(1.15)`;
 
                     if (context === 'home' && !edgeCooldown) {
-                        if (curX >= window.innerWidth - 36 && currentPage < 2) {
+                        if (curX >= window.innerWidth - 36 && currentPage < 3) {
                             edgeCooldown = true;
-                            const nextPage = currentPage + 1;
+                            const nextPage = Math.max(2, currentPage + 1);
                             app.page = nextPage;
                             app.location = 'home';
                             goToPage(nextPage);
                             startX = curX - 80;
-                            showToast(`Moved to Page ${nextPage + 1}`);
+                            showToast(`Moved to Page ${nextPage - 1}`);
                             setTimeout(() => { edgeCooldown = false; }, 550);
-                        } else if (curX <= 36 && currentPage > 0) {
+                        } else if (curX <= 36 && currentPage > 1) {
                             edgeCooldown = true;
-                            const prevPage = currentPage - 1;
+                            const prevPage = Math.max(1, currentPage - 1);
                             app.page = prevPage;
                             app.location = 'home';
                             goToPage(prevPage);
                             startX = curX + 80;
-                            showToast(`Moved to Page ${prevPage + 1}`);
+                            showToast(prevPage === 1 ? 'Moved to Time Page' : `Moved to Page ${prevPage - 1}`);
                             setTimeout(() => { edgeCooldown = false; }, 550);
                         }
                     }
@@ -948,10 +1348,10 @@
                         }
                     } else if (context === 'drawer') {
                         app.location = 'home';
-                        app.page = currentPage === 0 ? 1 : currentPage;
+                        app.page = currentPage < 2 ? 2 : currentPage;
                         toggleDrawer(false);
                         goToPage(app.page);
-                        showToast(`${app.name} added to Page ${app.page + 1}`);
+                        showToast(`${app.name} added to home screen`);
                     } else if (context === 'home') {
                         app.location = 'home';
                         app.page = currentPage;
@@ -1047,40 +1447,40 @@
         }
 
         function renderAll() {
-            const pages = [
-                document.getElementById('page-0'),
-                document.getElementById('page-1'),
-                document.getElementById('page-2')
-            ];
+            const pages = {
+                1: document.getElementById('page-1'),
+                2: document.getElementById('page-2'),
+                3: document.getElementById('page-3')
+            };
             const dock = document.getElementById('dock-grid');
 
-            const frag0 = document.createDocumentFragment();
             const frag1 = document.createDocumentFragment();
             const frag2 = document.createDocumentFragment();
+            const frag3 = document.createDocumentFragment();
             const fragDock = document.createDocumentFragment();
 
             const sortedByOrder = [...apps].sort((a, b) => (a.order || 0) - (b.order || 0));
 
             sortedByOrder.forEach(app => {
                 if (app.location === 'home') {
-                    const pIdx = Math.min(Math.max(app.page ?? 1, 0), 2);
+                    const pIdx = Math.min(Math.max(app.page ?? 2, 1), 3);
                     const el = createAppElement(app, 'home');
-                    if (pIdx === 0) frag0.appendChild(el);
-                    else if (pIdx === 1) frag1.appendChild(el);
-                    else frag2.appendChild(el);
+                    if (pIdx === 1) frag1.appendChild(el);
+                    else if (pIdx === 2) frag2.appendChild(el);
+                    else frag3.appendChild(el);
                 } else if (app.location === 'dock') {
                     fragDock.appendChild(createAppElement(app, 'dock'));
                 }
             });
 
-            pages[0].innerHTML = '';
             pages[1].innerHTML = '';
             pages[2].innerHTML = '';
+            pages[3].innerHTML = '';
             dock.innerHTML = '';
 
-            pages[0].appendChild(frag0);
             pages[1].appendChild(frag1);
             pages[2].appendChild(frag2);
+            pages[3].appendChild(frag3);
             dock.appendChild(fragDock);
 
             buildDrawerOnce();
@@ -1118,14 +1518,16 @@
         function filterDrawerApps() {
             const query = document.getElementById('drawer-search-input').value.trim().toLowerCase();
             const items = document.querySelectorAll('#drawer-grid .app-item');
-            items.forEach(item => {
-                const matchCat = currentCategory === 'All' || item.dataset.category === currentCategory;
-                const matchSearch = !query || item.dataset.name.includes(query);
-                item.style.display = (matchCat && matchSearch) ? 'flex' : 'none';
+            requestAnimationFrame(() => {
+                items.forEach(item => {
+                    const matchCat = currentCategory === 'All' || item.dataset.category === currentCategory;
+                    const matchSearch = !query || item.dataset.name.includes(query);
+                    item.style.display = (matchCat && matchSearch) ? 'flex' : 'none';
+                });
             });
         }
 
-        /* Swipe Navigation */
+        /* Swipe Navigation Across Zero-Screen (0), Time Page (1), Apps 1 (2), Apps 2 (3) */
         const viewport = document.getElementById('pages-viewport');
         const track = document.getElementById('pages-track');
         const clockWidget = document.getElementById('clock-widget');
@@ -1144,6 +1546,10 @@
             const dx = e.touches[0].clientX - swipeStartX;
             const dy = e.touches[0].clientY - swipeStartY;
 
+            if (currentPage === 0 && Math.abs(dy) > Math.abs(dx)) {
+                return;
+            }
+
             if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
                 isHorizontalSwipe = true;
                 const baseOffset = -currentPage * window.innerWidth;
@@ -1159,21 +1565,23 @@
             const dy = e.changedTouches[0].clientY - swipeStartY;
 
             if (isHorizontalSwipe) {
-                if (dx < -55 && currentPage < 2) goToPage(currentPage + 1);
+                if (dx < -55 && currentPage < 3) goToPage(currentPage + 1);
                 else if (dx > 55 && currentPage > 0) goToPage(currentPage - 1);
                 else goToPage(currentPage);
-            } else if (dy < -55 && Math.abs(dx) < 55) {
+            } else if (dy < -55 && Math.abs(dx) < 55 && currentPage !== 0) {
                 toggleDrawer(true);
             }
         }, { passive: true });
 
         function goToPage(pageIdx) {
-            currentPage = pageIdx;
+            currentPage = Math.min(Math.max(pageIdx, 0), 3);
             track.style.transform = `translate3d(-${currentPage * 100}vw, 0, 0)`;
-            /* Show Draggable Clock Only on Page 1 (index 0) so Page 2 & 3 stay clean for Apps */
-            clockWidget.style.display = currentPage === 0 ? 'block' : 'none';
-            document.querySelectorAll('.dot').forEach((d, idx) => {
-                d.classList.toggle('active', idx === currentPage);
+            clockWidget.style.display = currentPage === 1 ? 'block' : 'none';
+
+            const dots = document.querySelectorAll('.dot');
+            const activeDotIdx = currentPage <= 1 ? 0 : (currentPage === 2 ? 1 : 2);
+            dots.forEach((d, idx) => {
+                d.classList.toggle('active', idx === activeDotIdx);
             });
         }
 
@@ -1208,8 +1616,8 @@
                 closeContextMenu();
             } else if (document.getElementById('app-drawer').classList.contains('open')) {
                 toggleDrawer(false);
-            } else if (currentPage !== 0) {
-                goToPage(0);
+            } else if (currentPage !== 1) {
+                goToPage(1);
             }
         }
 
@@ -1220,7 +1628,7 @@
             tempIconClass = app.iconClass || "";
             tempBg = app.bg || "transparent";
             tempLocation = app.location || "home";
-            tempPage = app.page ?? 1;
+            tempPage = app.page ?? 2;
 
             document.getElementById('edit-name').value = app.name;
             document.getElementById('icon-modal').style.display = 'flex';
@@ -1233,7 +1641,7 @@
         function assignLocation(loc, page) {
             tempLocation = loc;
             tempPage = page;
-            showToast(loc === 'dock' ? "Dock selected" : `Page ${page + 1} selected`);
+            showToast("Location selected");
         }
 
         function handleImageUpload(event) {
@@ -1318,7 +1726,7 @@
                 page: app.page,
                 order: app.order
             };
-            localStorage.setItem('xos16_app_meta_v2', JSON.stringify(savedMeta));
+            localStorage.setItem('xos16_app_meta_v3', JSON.stringify(savedMeta));
         }
 
         function updateClock() {
