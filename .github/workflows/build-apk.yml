@@ -33,10 +33,10 @@ jobs:
           unzip -q gradle.zip -d /tmp/gradle
           /tmp/gradle/gradle-8.5/bin/gradle wrapper --gradle-version 8.5 --distribution-type bin
           chmod +x gradlew
-          rm -rf gradle.zip /tmp/gradle
+          rm -f gradle.zip
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
