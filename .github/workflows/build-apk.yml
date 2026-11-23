@@ -27,24 +27,13 @@ jobs:
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      - name: Setup Gradle Wrapper Properties
+      - name: Setup Gradle 8.5 & Wrapper
         run: |
-          mkdir -p gradle/wrapper
-          cat << 'EOF' > gradle/wrapper/gradle-wrapper.properties
-          distributionBase=GRADLE_USER_HOME
-          distributionPath=wrapper/dists
-          distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip
-          networkTimeout=10000
-          validateDistributionUrl=true
-          zipStoreBase=GRADLE_USER_HOME
-          zipStorePath=wrapper/dists
-          EOF
-
-      - name: Install Gradle CLI & Generate Wrapper Jar
-        run: |
-          sudo apt-get update -y && sudo apt-get install -y gradle
-          gradle wrapper --gradle-version 8.5 --distribution-type bin
+          curl -sSL https://services.gradle.org/distributions/gradle-8.5-bin.zip -o gradle.zip
+          unzip -q gradle.zip -d /tmp/gradle
+          /tmp/gradle/gradle-8.5/bin/gradle wrapper --gradle-version 8.5 --distribution-type bin
           chmod +x gradlew
+          rm -rf gradle.zip /tmp/gradle
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
