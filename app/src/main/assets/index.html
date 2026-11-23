@@ -8,7 +8,7 @@
     <style>
         :root {
             --xos-accent: #00e676;
-            --xos-glass: rgba(22, 26, 35, 0.56);
+            --xos-glass: rgba(22, 26, 35, 0.54);
             --xos-border: rgba(255, 255, 255, 0.18);
             --text-main: #ffffff;
             --text-muted: #cbd5e1;
@@ -39,39 +39,58 @@
             content: "";
             position: fixed;
             inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.04) 48%, rgba(0,0,0,0.34) 100%);
+            background: linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.03) 48%, rgba(0,0,0,0.32) 100%);
             pointer-events: none;
             z-index: 0;
         }
 
-        /* Clock Lower & Larger */
-        .xos-clock-section {
-            padding: 54px 22px 12px 22px;
-            z-index: 5;
+        /* Double-Sized Freely Draggable Clock Widget */
+        .clock-widget {
+            position: fixed;
+            top: 64px;
+            left: 24px;
+            z-index: 25;
+            padding: 8px 12px;
+            border-radius: 22px;
+            transition: transform 0.15s ease, background 0.2s ease;
+            touch-action: none;
+            cursor: grab;
         }
 
-        .clock-box h1 {
-            font-size: 68px;
+        .clock-widget.dragging {
+            background: rgba(22, 26, 35, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px dashed var(--xos-accent);
+            transform: scale(1.03);
+            z-index: 95;
+        }
+
+        .clock-widget h1 {
+            font-size: 108px;
             font-weight: 800;
-            line-height: 1;
-            letter-spacing: -2.5px;
+            line-height: 0.94;
+            letter-spacing: -4px;
             background: linear-gradient(to bottom, #ffffff, #e2e8f0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 3px 10px rgba(0,0,0,0.45));
+            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.48));
+            pointer-events: none;
         }
 
-        .clock-box .accent-dot {
+        .clock-widget .accent-dot {
             color: var(--xos-accent);
             -webkit-text-fill-color: var(--xos-accent);
         }
 
-        .clock-box p {
-            font-size: 14px;
+        .clock-widget p {
+            font-size: 17px;
             color: #f8fafc;
-            margin-top: 7px;
+            margin-top: 10px;
+            margin-left: 4px;
             font-weight: 600;
-            text-shadow: 0 1px 5px rgba(0,0,0,0.8);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.85);
+            pointer-events: none;
         }
 
         /* Multi-Page Horizontal Home Screen Container */
@@ -95,15 +114,15 @@
         .home-page {
             width: 100vw;
             height: 100%;
-            padding: 8px 12px;
+            padding: 46px 18px 10px 18px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: min-content;
-            gap: 16px 6px;
+            gap: 18px 12px;
             align-content: start;
         }
 
-        /* App Icon Size Set to 85 (on a 100 scale) */
+        /* Exact Reference Screenshot Icon Size (58px / ~15.8% screen width) */
         .app-item {
             display: flex;
             flex-direction: column;
@@ -120,24 +139,22 @@
         }
 
         .app-item.dragging {
-            transform: scale(1.12);
+            transform: scale(1.15);
             z-index: 90;
             opacity: 0.94;
             filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6));
         }
 
         .app-icon {
-            width: 85px;
-            height: 85px;
-            max-width: 22vw;
-            max-height: 22vw;
-            border-radius: 22px;
+            width: 58px;
+            height: 58px;
+            border-radius: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
+            font-size: 26px;
             color: white;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
             overflow: hidden;
             position: relative;
         }
@@ -150,10 +167,10 @@
         }
 
         .app-name {
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 500;
             text-align: center;
-            max-width: 88px;
+            max-width: 74px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -167,8 +184,8 @@
             justify-content: center;
             align-items: center;
             gap: 7px;
-            padding: 8px 0 6px 0;
-            z-index: 5;
+            padding: 6px 0;
+            z-index: 10;
         }
 
         .dot {
@@ -185,10 +202,10 @@
             background: #ffffff;
         }
 
-        /* Larger Bottom Dock Box */
+        /* Bottom Dock Box Matched to Reference Screenshot */
         .dock-wrapper {
-            padding: 6px 12px 18px 12px;
-            z-index: 5;
+            padding: 4px 16px 18px 16px;
+            z-index: 10;
         }
 
         .xos-dock {
@@ -196,22 +213,20 @@
             backdrop-filter: blur(22px);
             -webkit-backdrop-filter: blur(22px);
             border: 1px solid var(--xos-border);
-            border-radius: 34px;
-            padding: 14px 10px;
-            min-height: 106px;
+            border-radius: 28px;
+            padding: 13px 12px;
+            min-height: 84px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             align-items: center;
-            gap: 6px;
+            gap: 10px;
         }
 
         .xos-dock .app-icon {
-            width: 85px;
-            height: 85px;
-            max-width: 21vw;
-            max-height: 21vw;
-            border-radius: 22px;
-            font-size: 36px;
+            width: 58px;
+            height: 58px;
+            border-radius: 15px;
+            font-size: 26px;
         }
 
         .xos-dock .app-name {
@@ -232,7 +247,7 @@
             opacity: 0;
             pointer-events: none;
             transition: transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.16s ease;
-            padding: 46px 14px 18px 14px;
+            padding: 46px 16px 18px 16px;
             will-change: transform, opacity;
         }
 
@@ -242,7 +257,6 @@
             pointer-events: auto;
         }
 
-        /* Category Bar Lower & Larger Text */
         .category-bar {
             display: flex;
             gap: 22px;
@@ -284,15 +298,14 @@
             background: var(--xos-accent);
         }
 
-        /* Smooth Scrolling Drawer Grid */
         .drawer-grid {
             flex: 1;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: min-content;
-            gap: 20px 6px;
+            gap: 20px 12px;
             overflow-y: auto;
-            padding: 10px 2px 16px 2px;
+            padding: 10px 4px 16px 4px;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
         }
@@ -306,7 +319,6 @@
             border-radius: 10px;
         }
 
-        /* Bottom English Search Bar in Drawer */
         .drawer-bottom-search {
             background: rgba(255, 255, 255, 0.13);
             border: 1px solid var(--xos-border);
@@ -512,7 +524,7 @@
 
         .toast {
             position: fixed;
-            bottom: 125px;
+            bottom: 112px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(15, 23, 42, 0.92);
@@ -529,15 +541,13 @@
 </head>
 <body>
 
-    <!-- Lower & Larger Clock -->
-    <div class="xos-clock-section">
-        <div class="clock-box">
-            <h1 id="main-clock">12<span class="accent-dot">:</span>00</h1>
-            <p id="main-date">Tuesday, November 24</p>
-        </div>
+    <!-- Double-Sized Freely Draggable Clock Widget -->
+    <div class="clock-widget" id="clock-widget">
+        <h1 id="main-clock">12<span class="accent-dot">:</span>00</h1>
+        <p id="main-date">Tuesday, November 24</p>
     </div>
 
-    <!-- Multi-Page Horizontal Home Screen -->
+    <!-- Multi-Page Horizontal Home Screen (Page 1 Clean, Apps on Page 2 & 3) -->
     <div class="pages-viewport" id="pages-viewport">
         <div class="pages-track" id="pages-track">
             <div class="home-page" data-page="0" id="page-0"></div>
@@ -553,7 +563,7 @@
         <span class="dot" onclick="goToPage(2)"></span>
     </div>
 
-    <!-- Larger Bottom Dock -->
+    <!-- Bottom Dock -->
     <div class="dock-wrapper">
         <div class="xos-dock" id="dock-grid"></div>
     </div>
@@ -655,15 +665,16 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        /* Default Apps Placed on Page 2 (page: 1), Keeping Page 1 (page: 0) Empty for Time & Wallpaper */
         const htmlStylizedApps = [
-            { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "linear-gradient(135deg, #ff0000, #b91c1c)", customImg: "", location: "home", page: 0, category: "Entertainment", order: 1 },
-            { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "linear-gradient(135deg, #1877f2, #1d4ed8)", customImg: "", location: "home", page: 0, category: "Social", order: 2 },
-            { id: "xtheme", name: "XTheme", url: "#", iconClass: "fa-solid fa-wand-magic-sparkles", bg: "linear-gradient(135deg, #00e676, #059669)", customImg: "", location: "home", page: 0, action: "edit", category: "Tools", order: 3 },
-            { id: "gamespace", name: "Game Space", url: "https://poki.com", iconClass: "fa-solid fa-gamepad", bg: "linear-gradient(135deg, #f97316, #ea580c)", customImg: "", location: "home", page: 0, category: "Games", order: 4 },
-            { id: "instagram", name: "Instagram", url: "https://instagram.com", iconClass: "fa-brands fa-instagram", bg: "linear-gradient(135deg, #f59e0b, #db2777, #7c3aed)", customImg: "", location: "home", page: 0, category: "Social", order: 5 },
-            { id: "whatsapp", name: "WhatsApp", url: "https://web.whatsapp.com", iconClass: "fa-brands fa-whatsapp", bg: "linear-gradient(135deg, #25d366, #15803d)", customImg: "", location: "home", page: 0, category: "Communication", order: 6 },
-            { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "linear-gradient(135deg, #334155, #0f172a)", customImg: "", location: "home", page: 0, category: "Tools", order: 7 },
-            { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "linear-gradient(135deg, #00e676, #0284c7)", customImg: "", location: "home", page: 0, action: "drawer", category: "Tools", order: 8 },
+            { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "linear-gradient(135deg, #ff0000, #b91c1c)", customImg: "", location: "home", page: 1, category: "Entertainment", order: 1 },
+            { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "linear-gradient(135deg, #1877f2, #1d4ed8)", customImg: "", location: "home", page: 1, category: "Social", order: 2 },
+            { id: "xtheme", name: "XTheme", url: "#", iconClass: "fa-solid fa-wand-magic-sparkles", bg: "linear-gradient(135deg, #00e676, #059669)", customImg: "", location: "home", page: 1, action: "edit", category: "Tools", order: 3 },
+            { id: "gamespace", name: "Game Space", url: "https://poki.com", iconClass: "fa-solid fa-gamepad", bg: "linear-gradient(135deg, #f97316, #ea580c)", customImg: "", location: "home", page: 1, category: "Games", order: 4 },
+            { id: "instagram", name: "Instagram", url: "https://instagram.com", iconClass: "fa-brands fa-instagram", bg: "linear-gradient(135deg, #f59e0b, #db2777, #7c3aed)", customImg: "", location: "home", page: 1, category: "Social", order: 5 },
+            { id: "whatsapp", name: "WhatsApp", url: "https://web.whatsapp.com", iconClass: "fa-brands fa-whatsapp", bg: "linear-gradient(135deg, #25d366, #15803d)", customImg: "", location: "home", page: 1, category: "Communication", order: 6 },
+            { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "linear-gradient(135deg, #334155, #0f172a)", customImg: "", location: "home", page: 1, category: "Tools", order: 7 },
+            { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "linear-gradient(135deg, #00e676, #0284c7)", customImg: "", location: "home", page: 1, action: "drawer", category: "Tools", order: 8 },
 
             { id: "dock_phone", name: "Phone", url: "tel:", iconClass: "fa-solid fa-phone", bg: "linear-gradient(135deg, #00e676, #047857)", customImg: "", location: "dock", page: 0, category: "Communication", order: 1 },
             { id: "dock_msg", name: "Messages", url: "sms:", iconClass: "fa-solid fa-comment-dots", bg: "linear-gradient(135deg, #38bdf8, #0284c7)", customImg: "", location: "dock", page: 0, category: "Communication", order: 2 },
@@ -671,7 +682,7 @@
             { id: "dock_cam", name: "Camera", url: "#", iconClass: "fa-solid fa-camera", bg: "linear-gradient(135deg, #64748b, #1e293b)", customImg: "", location: "dock", page: 0, category: "Tools", order: 4 }
         ];
 
-        let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta')) || {};
+        let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta_v2')) || {};
         let apps = [];
         let currentPage = 0;
         let currentCategory = "All";
@@ -684,7 +695,71 @@
         let tempIconClass = "";
         let tempBg = "";
         let tempLocation = "home";
-        let tempPage = 0;
+        let tempPage = 1;
+
+        /* Free Drag & Drop Clock Widget Anywhere on Screen */
+        (function setupClockDrag() {
+            const clockEl = document.getElementById('clock-widget');
+            const savedClockPos = JSON.parse(localStorage.getItem('xos16_clock_pos'));
+            if (savedClockPos) {
+                clockEl.style.left = savedClockPos.left + 'px';
+                clockEl.style.top = savedClockPos.top + 'px';
+            }
+
+            let holdTimer = null;
+            let isClockDragging = false;
+            let offsetX = 0, offsetY = 0;
+
+            clockEl.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 1) return;
+                const rect = clockEl.getBoundingClientRect();
+                offsetX = e.touches[0].clientX - rect.left;
+                offsetY = e.touches[0].clientY - rect.top;
+
+                holdTimer = setTimeout(() => {
+                    isClockDragging = true;
+                    clockEl.classList.add('dragging');
+                    if (navigator.vibrate) navigator.vibrate(45);
+                    showToast("Drag time anywhere on screen");
+                }, 500);
+            }, { passive: true });
+
+            clockEl.addEventListener('touchmove', (e) => {
+                if (!isClockDragging) {
+                    clearTimeout(holdTimer);
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+
+                const rect = clockEl.getBoundingClientRect();
+                let newLeft = e.touches[0].clientX - offsetX;
+                let newTop = e.touches[0].clientY - offsetY;
+
+                const maxLeft = window.innerWidth - rect.width;
+                const maxTop = window.innerHeight - rect.height;
+
+                newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+                newTop = Math.max(24, Math.min(newTop, maxTop));
+
+                clockEl.style.left = newLeft + 'px';
+                clockEl.style.top = newTop + 'px';
+            }, { passive: false });
+
+            clockEl.addEventListener('touchend', () => {
+                clearTimeout(holdTimer);
+                if (isClockDragging) {
+                    isClockDragging = false;
+                    clockEl.classList.remove('dragging');
+                    const rect = clockEl.getBoundingClientRect();
+                    localStorage.setItem('xos16_clock_pos', JSON.stringify({
+                        left: Math.round(rect.left),
+                        top: Math.round(rect.top)
+                    }));
+                    showToast("Time position saved");
+                }
+            });
+        })();
 
         function refreshInstalledApps() {
             let systemApps = [];
@@ -699,8 +774,8 @@
                         customImg: "",
                         iconClass: "",
                         bg: "transparent",
-                        location: idx < 16 ? "home" : "drawer",
-                        page: idx < 8 ? 1 : 2,
+                        location: idx < 24 ? "home" : "drawer",
+                        page: idx < 12 ? 1 : 2,
                         category: item.category || "Tools",
                         order: 100 + idx
                     }));
@@ -799,7 +874,7 @@
                     isAnyAppDragging = true;
                     el.classList.add('dragging');
                     if (navigator.vibrate) navigator.vibrate(40);
-                }, 650);
+                }, 600);
             }, { passive: true });
 
             el.addEventListener('touchmove', (e) => {
@@ -816,9 +891,8 @@
                 if (isDragging) {
                     e.preventDefault();
                     e.stopPropagation();
-                    el.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(1.12)`;
+                    el.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(1.15)`;
 
-                    // Move app across home screen pages when dragged near left/right edge
                     if (context === 'home' && !edgeCooldown) {
                         if (curX >= window.innerWidth - 36 && currentPage < 2) {
                             edgeCooldown = true;
@@ -874,9 +948,10 @@
                         }
                     } else if (context === 'drawer') {
                         app.location = 'home';
-                        app.page = currentPage;
+                        app.page = currentPage === 0 ? 1 : currentPage;
                         toggleDrawer(false);
-                        showToast(`${app.name} added to Page ${currentPage + 1}`);
+                        goToPage(app.page);
+                        showToast(`${app.name} added to Page ${app.page + 1}`);
                     } else if (context === 'home') {
                         app.location = 'home';
                         app.page = currentPage;
@@ -896,7 +971,6 @@
             });
         }
 
-        /* Long Press 3-Option Menu Handlers */
         function openContextMenu(app) {
             selectedContextApp = app;
             document.getElementById('context-app-title').innerText = app.name;
@@ -989,7 +1063,7 @@
 
             sortedByOrder.forEach(app => {
                 if (app.location === 'home') {
-                    const pIdx = Math.min(Math.max(app.page || 0, 0), 2);
+                    const pIdx = Math.min(Math.max(app.page ?? 1, 0), 2);
                     const el = createAppElement(app, 'home');
                     if (pIdx === 0) frag0.appendChild(el);
                     else if (pIdx === 1) frag1.appendChild(el);
@@ -1054,6 +1128,7 @@
         /* Swipe Navigation */
         const viewport = document.getElementById('pages-viewport');
         const track = document.getElementById('pages-track');
+        const clockWidget = document.getElementById('clock-widget');
         let swipeStartX = 0, swipeStartY = 0, isHorizontalSwipe = false;
 
         viewport.addEventListener('touchstart', (e) => {
@@ -1095,6 +1170,8 @@
         function goToPage(pageIdx) {
             currentPage = pageIdx;
             track.style.transform = `translate3d(-${currentPage * 100}vw, 0, 0)`;
+            /* Show Draggable Clock Only on Page 1 (index 0) so Page 2 & 3 stay clean for Apps */
+            clockWidget.style.display = currentPage === 0 ? 'block' : 'none';
             document.querySelectorAll('.dot').forEach((d, idx) => {
                 d.classList.toggle('active', idx === currentPage);
             });
@@ -1143,7 +1220,7 @@
             tempIconClass = app.iconClass || "";
             tempBg = app.bg || "transparent";
             tempLocation = app.location || "home";
-            tempPage = app.page || 0;
+            tempPage = app.page ?? 1;
 
             document.getElementById('edit-name').value = app.name;
             document.getElementById('icon-modal').style.display = 'flex';
@@ -1241,7 +1318,7 @@
                 page: app.page,
                 order: app.order
             };
-            localStorage.setItem('xos16_app_meta', JSON.stringify(savedMeta));
+            localStorage.setItem('xos16_app_meta_v2', JSON.stringify(savedMeta));
         }
 
         function updateClock() {
