@@ -12,8 +12,8 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.BatteryManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Base64;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -73,7 +73,13 @@ public class MainActivity extends AppCompatActivity {
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
         webView.addJavascriptInterface(new LauncherBridge(), "AndroidBridge");
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                view.evaluateJavascript("if(typeof refreshInstalledApps === 'function') refreshInstalledApps();", null);
+            }
+        });
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -90,6 +96,14 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(webView);
         webView.loadUrl("file:///android_asset/index.html");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webView != null) {
+            webView.evaluateJavascript("if(typeof refreshInstalledApps === 'function') refreshInstalledApps();", null);
+        }
     }
 
     @Override
@@ -149,25 +163,31 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void openWallpaperPicker() {
+        public void openAppInfo(String packageName) {
             runOnUiThread(() -> {
-                Intent intent = new Intent(Intent.ACTION_SET_WALLPAPER);
-                startActivity(Intent.createChooser(intent, "Choose Wallpaper"));
+                try {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
         }
 
         @JavascriptInterface
-        public void openHomeSettings() {
+        public void uninstallApp(String packageName) {
             runOnUiThread(() -> {
-                Intent intent = new Intent(android.provider.Settings.ACTION_HOME_SETTINGS);
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(Intent.ACTION_DELETE);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
-        }
-
-        @JavascriptInterface
-        public int getBatteryLevel() {
-            BatteryManager bm = (BatteryManager) getSystemService(BATTERY_SERVICE);
-            return bm != null ? bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) : 100;
         }
 
         private String detectCategory(String pkg, ApplicationInfo appInfo) {
@@ -212,9 +232,9 @@ public class MainActivity extends AppCompatActivity {
                     drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
                     drawable.draw(canvas);
                 }
-                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 128, 128, true);
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 112, 112, true);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                scaled.compress(Bitmap.CompressFormat.PNG, 90, baos);
+                scaled.compress(Bitmap.CompressFormat.PNG, 85, baos);
                 return "data:image/png;base64," + Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
             } catch (Exception e) {
                 return "";
