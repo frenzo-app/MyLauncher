@@ -8,7 +8,6 @@
     <style>
         :root {
             --xos-accent: #00e676;
-            --xos-neon: #38bdf8;
             --xos-glass: rgba(22, 26, 35, 0.58);
             --xos-border: rgba(255, 255, 255, 0.18);
             --text-main: #ffffff;
@@ -45,85 +44,76 @@
             z-index: 0;
         }
 
-        /* Stylish Premium Clock Widget */
+        /* Boxless Clock Widget with Multi-Color Shade & Highlight */
         .clock-widget {
             position: fixed;
             top: 96px;
-            left: 18px;
+            left: 22px;
             z-index: 25;
-            padding: 14px 18px;
-            border-radius: 28px;
-            background: rgba(14, 20, 32, 0.34);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-            transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease;
+            padding: 8px 12px;
+            border-radius: 22px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
             touch-action: none;
             cursor: grab;
         }
 
+        .clock-widget::before {
+            content: "";
+            position: absolute;
+            inset: -14px -22px;
+            border-radius: 999px;
+            background:
+                radial-gradient(circle at 22% 35%, rgba(255, 77, 141, 0.34), transparent 58%),
+                radial-gradient(circle at 75% 30%, rgba(56, 189, 248, 0.36), transparent 60%),
+                radial-gradient(circle at 52% 82%, rgba(0, 230, 118, 0.30), transparent 62%),
+                radial-gradient(circle at 85% 75%, rgba(250, 204, 21, 0.24), transparent 55%);
+            filter: blur(22px);
+            pointer-events: none;
+            z-index: -1;
+        }
+
         .clock-widget.dragging {
-            background: rgba(18, 26, 40, 0.62);
-            border: 1px dashed var(--xos-accent);
+            border: 1px dashed rgba(255, 255, 255, 0.65);
             transform: scale(1.04) translateZ(0);
             z-index: 95;
         }
 
-        .clock-top-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
-            pointer-events: none;
-        }
-
-        .clock-badge {
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--xos-accent);
-            background: rgba(0, 230, 118, 0.14);
-            border: 1px solid rgba(0, 230, 118, 0.35);
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-
-        .clock-ampm {
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
-            color: #e2e8f0;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-        }
-
         .clock-widget h1 {
-            font-size: 98px;
+            font-size: 108px;
             font-weight: 850;
-            line-height: 0.95;
+            line-height: 0.94;
             letter-spacing: -4px;
-            background: linear-gradient(180deg, #ffffff 15%, #dbeafe 65%, #93c5fd 100%);
+            background: linear-gradient(120deg, #ffffff 0%, #fde047 28%, #38bdf8 58%, #f472b6 84%, #4ade80 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.55));
+            filter:
+                drop-shadow(0 4px 14px rgba(0, 0, 0, 0.52))
+                drop-shadow(0 0 18px rgba(56, 189, 248, 0.35))
+                drop-shadow(0 0 22px rgba(244, 114, 182, 0.28));
             pointer-events: none;
         }
 
         .clock-widget .accent-dot {
-            background: linear-gradient(180deg, #4ade80, #00e676);
+            background: linear-gradient(180deg, #00e676, #38bdf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .clock-widget p {
-            font-size: 16px;
-            color: #f1f5f9;
-            margin-top: 8px;
-            margin-left: 2px;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            font-size: 17px;
+            margin-top: 10px;
+            margin-left: 4px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            background: linear-gradient(90deg, #ffffff 0%, #bae6fd 45%, #fbcfe8 80%, #bbf7d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter:
+                drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85))
+                drop-shadow(0 0 12px rgba(250, 204, 21, 0.25));
             pointer-events: none;
         }
 
@@ -428,7 +418,7 @@
             border-radius: 6px;
         }
 
-        /* Stylish Neon-Glass App Icon Size (66px) */
+        /* Original Clean App Icon Style (66px) */
         .app-item {
             display: flex;
             flex-direction: column;
@@ -461,9 +451,7 @@
             align-items: center;
             font-size: 30px;
             color: white;
-            background: radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.24), rgba(10, 16, 32, 0.88));
-            border: 1.5px solid rgba(56, 189, 248, 0.42);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.38), 0 0 12px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
             overflow: hidden;
             position: relative;
         }
@@ -473,7 +461,6 @@
             height: 100%;
             object-fit: cover;
             pointer-events: none;
-            border-radius: 16px;
         }
 
         .app-name {
@@ -862,12 +849,8 @@
 </head>
 <body>
 
-    <!-- Stylish Premium Clock Widget -->
+    <!-- Boxless Clock Widget with Multi-Color Shade -->
     <div class="clock-widget" id="clock-widget">
-        <div class="clock-top-row">
-            <span class="clock-badge">XOS 16</span>
-            <span class="clock-ampm" id="main-ampm">PM</span>
-        </div>
         <h1 id="main-clock">12<span class="accent-dot">:</span>00</h1>
         <p id="main-date">Tuesday, November 24</p>
     </div>
@@ -1087,19 +1070,19 @@
 
     <script>
         const htmlStylizedApps = [
-            { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "radial-gradient(circle at 30% 25%, rgba(239, 68, 68, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "home", page: 2, category: "Entertainment", order: 1 },
-            { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "radial-gradient(circle at 30% 25%, rgba(59, 130, 246, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "home", page: 2, category: "Social", order: 2 },
-            { id: "xtheme", name: "XTheme", url: "#", iconClass: "fa-solid fa-wand-magic-sparkles", bg: "radial-gradient(circle at 30% 25%, rgba(0, 230, 118, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "home", page: 2, action: "edit", category: "Tools", order: 3 },
-            { id: "gamespace", name: "Game Space", url: "https://poki.com", iconClass: "fa-solid fa-gamepad", bg: "radial-gradient(circle at 30% 25%, rgba(249, 115, 22, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "home", page: 2, category: "Games", order: 4 },
-            { id: "instagram", name: "Instagram", url: "https://instagram.com", iconClass: "fa-brands fa-instagram", bg: "radial-gradient(circle at 30% 25%, rgba(236, 72, 153, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "home", page: 2, category: "Social", order: 5 },
-            { id: "whatsapp", name: "WhatsApp", url: "https://web.whatsapp.com", iconClass: "fa-brands fa-whatsapp", bg: "radial-gradient(circle at 30% 25%, rgba(34, 197, 94, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "home", page: 2, category: "Communication", order: 6 },
-            { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.32), rgba(15, 23, 42, 0.9))", customImg: "", location: "home", page: 2, category: "Tools", order: 7 },
-            { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "radial-gradient(circle at 30% 25%, rgba(0, 230, 118, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "home", page: 2, action: "drawer", category: "Tools", order: 8 },
+            { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "linear-gradient(135deg, #ff0000, #b91c1c)", customImg: "", location: "home", page: 2, category: "Entertainment", order: 1 },
+            { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "linear-gradient(135deg, #1877f2, #1d4ed8)", customImg: "", location: "home", page: 2, category: "Social", order: 2 },
+            { id: "xtheme", name: "XTheme", url: "#", iconClass: "fa-solid fa-wand-magic-sparkles", bg: "linear-gradient(135deg, #00e676, #059669)", customImg: "", location: "home", page: 2, action: "edit", category: "Tools", order: 3 },
+            { id: "gamespace", name: "Game Space", url: "https://poki.com", iconClass: "fa-solid fa-gamepad", bg: "linear-gradient(135deg, #f97316, #ea580c)", customImg: "", location: "home", page: 2, category: "Games", order: 4 },
+            { id: "instagram", name: "Instagram", url: "https://instagram.com", iconClass: "fa-brands fa-instagram", bg: "linear-gradient(135deg, #f59e0b, #db2777, #7c3aed)", customImg: "", location: "home", page: 2, category: "Social", order: 5 },
+            { id: "whatsapp", name: "WhatsApp", url: "https://web.whatsapp.com", iconClass: "fa-brands fa-whatsapp", bg: "linear-gradient(135deg, #25d366, #15803d)", customImg: "", location: "home", page: 2, category: "Communication", order: 6 },
+            { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "linear-gradient(135deg, #334155, #0f172a)", customImg: "", location: "home", page: 2, category: "Tools", order: 7 },
+            { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "linear-gradient(135deg, #00e676, #0284c7)", customImg: "", location: "home", page: 2, action: "drawer", category: "Tools", order: 8 },
 
-            { id: "dock_phone", name: "Phone", url: "", iconClass: "fa-solid fa-phone", bg: "radial-gradient(circle at 30% 25%, rgba(0, 230, 118, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "dock", page: 1, category: "Communication", order: 1 },
-            { id: "dock_msg", name: "Messages", url: "", iconClass: "fa-solid fa-comment-dots", bg: "radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "dock", page: 1, category: "Communication", order: 2 },
-            { id: "dock_chrome", name: "Chrome", url: "https://google.com", iconClass: "fa-brands fa-chrome", bg: "radial-gradient(circle at 30% 25%, rgba(250, 204, 21, 0.32), rgba(15, 23, 42, 0.88))", customImg: "", location: "dock", page: 1, category: "Tools", order: 3 },
-            { id: "dock_cam", name: "Camera", url: "#", iconClass: "fa-solid fa-camera", bg: "radial-gradient(circle at 30% 25%, rgba(148, 163, 184, 0.35), rgba(15, 23, 42, 0.88))", customImg: "", location: "dock", page: 1, category: "Tools", order: 4 }
+            { id: "dock_phone", name: "Phone", url: "", iconClass: "fa-solid fa-phone", bg: "linear-gradient(135deg, #00e676, #047857)", customImg: "", location: "dock", page: 1, category: "Communication", order: 1 },
+            { id: "dock_msg", name: "Messages", url: "", iconClass: "fa-solid fa-comment-dots", bg: "linear-gradient(135deg, #38bdf8, #0284c7)", customImg: "", location: "dock", page: 1, category: "Communication", order: 2 },
+            { id: "dock_chrome", name: "Chrome", url: "https://google.com", iconClass: "fa-brands fa-chrome", bg: "linear-gradient(135deg, #facc15, #ef4444)", customImg: "", location: "dock", page: 1, category: "Tools", order: 3 },
+            { id: "dock_cam", name: "Camera", url: "#", iconClass: "fa-solid fa-camera", bg: "linear-gradient(135deg, #64748b, #1e293b)", customImg: "", location: "dock", page: 1, category: "Tools", order: 4 }
         ];
 
         let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta_v3')) || {};
@@ -1214,7 +1197,7 @@
                         systemIcon: item.systemIcon,
                         customImg: "",
                         iconClass: "",
-                        bg: "radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.24), rgba(10, 16, 32, 0.88))",
+                        bg: "transparent",
                         location: idx < 24 ? "home" : "drawer",
                         page: idx < 12 ? 2 : 3,
                         category: item.category || "Tools",
@@ -1272,7 +1255,7 @@
             appEl.dataset.name = (app.name || '').toLowerCase();
 
             let iconHtml = '';
-            let iconBg = app.bg || 'radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.24), rgba(10, 16, 32, 0.88))';
+            let iconBg = app.bg || 'transparent';
 
             if (app.customImg) {
                 iconHtml = `<img src="${app.customImg}" alt="${app.name}">`;
@@ -1281,8 +1264,10 @@
                 iconHtml = `<i class="${app.iconClass}"></i>`;
             } else if (app.systemIcon) {
                 iconHtml = `<img src="${app.systemIcon}" alt="${app.name}">`;
+                iconBg = 'transparent';
             } else {
                 iconHtml = `<i class="fa-solid fa-cube"></i>`;
+                iconBg = 'linear-gradient(135deg, #00e676, #0284c7)';
             }
 
             appEl.innerHTML = `
@@ -1667,7 +1652,7 @@
             currentEditingId = app.id;
             tempCustomImg = app.customImg || "";
             tempIconClass = app.iconClass || "";
-            tempBg = app.bg || "radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.24), rgba(10, 16, 32, 0.88))";
+            tempBg = app.bg || "transparent";
             tempLocation = app.location || "home";
             tempPage = app.page ?? 2;
 
@@ -1744,7 +1729,7 @@
                         ...app,
                         customImg: "",
                         iconClass: "",
-                        bg: "radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.24), rgba(10, 16, 32, 0.88))"
+                        bg: "transparent"
                     };
                     saveMetaForApp(updated);
                     return updated;
@@ -1772,12 +1757,9 @@
 
         function updateClock() {
             const now = new Date();
-            const rawHours = now.getHours();
-            const ampm = rawHours >= 12 ? 'PM' : 'AM';
-            let hours = rawHours % 12 || 12;
+            let hours = now.getHours() % 12 || 12;
             let minutes = now.getMinutes();
             minutes = minutes < 10 ? '0' + minutes : minutes;
-            document.getElementById('main-ampm').innerText = ampm;
             document.getElementById('main-clock').innerHTML = `${hours}<span class="accent-dot">:</span>${minutes}`;
             document.getElementById('main-date').innerText = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
         }
