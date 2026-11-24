@@ -1,4 +1,4 @@
-package com.example.mylauncher;
+package com.xos16.launcher;
 
 import android.content.Context;
 import android.content.Intent;
