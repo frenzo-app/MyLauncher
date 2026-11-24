@@ -43,6 +43,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int FILE_CHOOSER_REQUEST_CODE = 1004;
+    private static final int UNINSTALL_REQUEST_CODE = 2005;
     private WebView webView;
     private ValueCallback<Uri[]> filePathCallback;
 
@@ -194,6 +195,13 @@ public class MainActivity extends AppCompatActivity {
             }
             filePathCallback.onReceiveValue(results);
             filePathCallback = null;
+        } else if (requestCode == UNINSTALL_REQUEST_CODE) {
+            if (webView != null) {
+                webView.post(() -> webView.evaluateJavascript(
+                        "if(typeof refreshInstalledApps === 'function'){ refreshInstalledApps(); }",
+                        null
+                ));
+            }
         }
     }
 
@@ -340,12 +348,17 @@ public class MainActivity extends AppCompatActivity {
             if (packageName == null || packageName.isEmpty()) return;
             runOnUiThread(() -> {
                 try {
-                    Intent intent = new Intent(Intent.ACTION_DELETE);
-                    intent.setData(Uri.parse("package:" + packageName));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    Uri packageUri = Uri.parse("package:" + packageName);
+                    Intent uninstallIntent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri);
+                    uninstallIntent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+                    startActivityForResult(uninstallIntent, UNINSTALL_REQUEST_CODE);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    try {
+                        Intent fallbackIntent = new Intent(Intent.ACTION_DELETE, Uri.parse("package:" + packageName));
+                        fallbackIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(fallbackIntent);
+                    } catch (Exception ignored) {
+                    }
                 }
             });
         }
