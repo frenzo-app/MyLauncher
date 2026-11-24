@@ -81,10 +81,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (webView != null) {
-            webView.post(() -> webView.evaluateJavascript(
-                    "if(typeof refreshInstalledApps === 'function'){ refreshInstalledApps(); }",
-                    null
-            ));
+            webView.postDelayed(() -> {
+                if (webView != null) {
+                    webView.evaluateJavascript(
+                            "if(typeof refreshInstalledApps === 'function'){ refreshInstalledApps(); }",
+                            null
+                    );
+                }
+            }, 180);
         }
     }
 
@@ -126,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         webView.setBackgroundColor(0x00000000);
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -405,16 +410,16 @@ public class MainActivity extends AppCompatActivity {
                 if (drawable instanceof BitmapDrawable) {
                     bitmap = ((BitmapDrawable) drawable).getBitmap();
                 } else {
-                    int w = Math.max(drawable.getIntrinsicWidth(), 96);
-                    int h = Math.max(drawable.getIntrinsicHeight(), 96);
+                    int w = Math.max(drawable.getIntrinsicWidth(), 80);
+                    int h = Math.max(drawable.getIntrinsicHeight(), 80);
                     bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(bitmap);
                     drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
                     drawable.draw(canvas);
                 }
-                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 128, 128, true);
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 96, 96, true);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                scaled.compress(Bitmap.CompressFormat.PNG, 85, outputStream);
+                scaled.compress(Bitmap.CompressFormat.PNG, 78, outputStream);
                 byte[] byteArray = outputStream.toByteArray();
                 return "data:image/png;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP);
             } catch (Exception e) {
