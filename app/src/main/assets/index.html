@@ -651,7 +651,7 @@
             color: rgba(255, 255, 255, 0.68);
         }
 
-        /* Long Press 3-Option Menu */
+        /* Long Press Context Menu */
         .context-overlay {
             position: fixed;
             inset: 0;
@@ -991,13 +991,17 @@
         </div>
     </div>
 
-    <!-- Long Press 3-Option Context Menu -->
+    <!-- Long Press Context Menu -->
     <div class="context-overlay" id="context-overlay" onclick="closeContextMenu(event)">
         <div class="context-menu" onclick="event.stopPropagation()">
             <div class="context-header" id="context-app-title">App Options</div>
             <div class="context-option" onclick="triggerAppInfo()">
                 <i class="fa-solid fa-circle-info" style="color:#38bdf8; width:18px;"></i>
                 <span>App info</span>
+            </div>
+            <div class="context-option" id="context-remove-option" onclick="triggerRemoveFromHome()">
+                <i class="fa-solid fa-minus-circle" style="color:#fbbf24; width:18px;"></i>
+                <span>Remove</span>
             </div>
             <div class="context-option danger" onclick="triggerUninstall()">
                 <i class="fa-solid fa-trash-can" style="width:18px;"></i>
@@ -1091,6 +1095,7 @@
         let currentCategory = "All";
         let currentEditingId = null;
         let selectedContextApp = null;
+        let selectedContextSource = "home";
         let drawerBuiltOnce = false;
         let isAnyAppDragging = false;
         let bannerIdx = 0;
@@ -1352,7 +1357,7 @@
 
                     const endTouch = e.changedTouches[0];
                     if (Math.abs(endTouch.clientX - startX) < 16 && Math.abs(endTouch.clientY - startY) < 16) {
-                        openContextMenu(app);
+                        openContextMenu(app, context);
                         return;
                     }
 
@@ -1395,9 +1400,14 @@
             });
         }
 
-        function openContextMenu(app) {
+        function openContextMenu(app, sourceContext) {
             selectedContextApp = app;
+            selectedContextSource = sourceContext || (app.location === 'home' ? 'home' : 'drawer');
             document.getElementById('context-app-title').innerText = app.name;
+            const removeBtn = document.getElementById('context-remove-option');
+            if (removeBtn) {
+                removeBtn.style.display = (app.location === 'home' || selectedContextSource === 'home') ? 'flex' : 'none';
+            }
             document.getElementById('context-overlay').style.display = 'flex';
         }
 
@@ -1415,6 +1425,17 @@
             } else {
                 showToast("App Info not available");
             }
+        }
+
+        function triggerRemoveFromHome() {
+            closeContextMenu();
+            if (!selectedContextApp) return;
+            selectedContextApp.location = 'drawer';
+            saveMetaForApp(selectedContextApp);
+            drawerBuiltOnce = false;
+            renderAll();
+            goToPage(currentPage);
+            showToast(`${selectedContextApp.name} removed from home screen`);
         }
 
         function triggerUninstall() {
