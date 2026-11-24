@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         );
                     }
                 }
-            }, 220);
+            }, 180);
         }
     }
 
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                             );
                         }
                     }
-                }, 180);
+                }, 150);
             }
         }
     }
@@ -439,16 +439,16 @@ public class MainActivity extends AppCompatActivity {
                 if (drawable instanceof BitmapDrawable) {
                     bitmap = ((BitmapDrawable) drawable).getBitmap();
                 } else {
-                    int w = Math.max(drawable.getIntrinsicWidth(), 72);
-                    int h = Math.max(drawable.getIntrinsicHeight(), 72);
+                    int w = Math.max(drawable.getIntrinsicWidth(), 64);
+                    int h = Math.max(drawable.getIntrinsicHeight(), 64);
                     bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(bitmap);
                     drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
                     drawable.draw(canvas);
                 }
-                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 84, 84, true);
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 64, 64, false);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                scaled.compress(Bitmap.CompressFormat.PNG, 72, outputStream);
+                scaled.compress(Bitmap.CompressFormat.PNG, 65, outputStream);
                 byte[] byteArray = outputStream.toByteArray();
                 return "data:image/png;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP);
             } catch (Exception e) {
