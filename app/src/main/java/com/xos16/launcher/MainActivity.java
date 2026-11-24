@@ -77,6 +77,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webView != null) {
+            webView.post(() -> webView.evaluateJavascript(
+                    "if(typeof refreshInstalledApps === 'function'){ refreshInstalledApps(); }",
+                    null
+            ));
+        }
+    }
+
     private void enableEdgeToEdge() {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -334,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 try {
                     Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    intent.setData(Uri.parse("package:" + packageName));
+                    intent.setData(Uri.fromParts("package", packageName, null));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } catch (Exception e) {
@@ -348,15 +359,15 @@ public class MainActivity extends AppCompatActivity {
             if (packageName == null || packageName.isEmpty()) return;
             runOnUiThread(() -> {
                 try {
-                    Uri packageUri = Uri.parse("package:" + packageName);
-                    Intent uninstallIntent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri);
-                    uninstallIntent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
-                    startActivityForResult(uninstallIntent, UNINSTALL_REQUEST_CODE);
+                    Uri packageUri = Uri.fromParts("package", packageName, null);
+                    Intent deleteIntent = new Intent(Intent.ACTION_DELETE, packageUri);
+                    startActivityForResult(deleteIntent, UNINSTALL_REQUEST_CODE);
                 } catch (Exception e) {
                     try {
-                        Intent fallbackIntent = new Intent(Intent.ACTION_DELETE, Uri.parse("package:" + packageName));
-                        fallbackIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(fallbackIntent);
+                        Intent settingsIntent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        settingsIntent.setData(Uri.fromParts("package", packageName, null));
+                        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(settingsIntent);
                     } catch (Exception ignored) {
                     }
                 }
