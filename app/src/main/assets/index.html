@@ -47,7 +47,7 @@
         /* Double-Sized Freely Draggable Clock Widget */
         .clock-widget {
             position: fixed;
-            top: 56px;
+            top: 76px;
             left: 24px;
             z-index: 25;
             padding: 8px 12px;
@@ -114,7 +114,7 @@
         .home-page {
             width: 100vw;
             height: 100%;
-            padding: 20px 14px 8px 14px;
+            padding: 64px 14px 8px 14px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-auto-rows: min-content;
@@ -1113,7 +1113,7 @@
                 const maxTop = window.innerHeight - rect.height;
 
                 newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-                newTop = Math.max(24, Math.min(newTop, maxTop));
+                newTop = Math.max(40, Math.min(newTop, maxTop));
 
                 clockEl.style.left = newLeft + 'px';
                 clockEl.style.top = newTop + 'px';
