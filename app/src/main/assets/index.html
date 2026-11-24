@@ -446,7 +446,7 @@
             pointer-events: none;
         }
 
-        /* Page Indicator Dots (3 Main Dots: Zero/Time, Apps 1, Apps 2) */
+        /* Page Indicator Dots */
         .page-dots {
             display: flex;
             justify-content: center;
@@ -1039,11 +1039,6 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        /* Track indices:
-           0 = Left Zero-Screen (XOS 16 Cards)
-           1 = Clean Time Page (Empty default)
-           2 = Apps Page 1
-           3 = Apps Page 2 */
         const htmlStylizedApps = [
             { id: "youtube", name: "YouTube", url: "https://m.youtube.com", iconClass: "fa-brands fa-youtube", bg: "linear-gradient(135deg, #ff0000, #b91c1c)", customImg: "", location: "home", page: 2, category: "Entertainment", order: 1 },
             { id: "facebook", name: "Facebook", url: "https://m.facebook.com", iconClass: "fa-brands fa-facebook-f", bg: "linear-gradient(135deg, #1877f2, #1d4ed8)", customImg: "", location: "home", page: 2, category: "Social", order: 2 },
@@ -1054,15 +1049,15 @@
             { id: "github", name: "GitHub", url: "https://github.com", iconClass: "fa-brands fa-github", bg: "linear-gradient(135deg, #334155, #0f172a)", customImg: "", location: "home", page: 2, category: "Tools", order: 7 },
             { id: "allapps", name: "All Apps", url: "#", iconClass: "fa-solid fa-grip", bg: "linear-gradient(135deg, #00e676, #0284c7)", customImg: "", location: "home", page: 2, action: "drawer", category: "Tools", order: 8 },
 
-            { id: "dock_phone", name: "Phone", url: "tel:", iconClass: "fa-solid fa-phone", bg: "linear-gradient(135deg, #00e676, #047857)", customImg: "", location: "dock", page: 1, category: "Communication", order: 1 },
-            { id: "dock_msg", name: "Messages", url: "sms:", iconClass: "fa-solid fa-comment-dots", bg: "linear-gradient(135deg, #38bdf8, #0284c7)", customImg: "", location: "dock", page: 1, category: "Communication", order: 2 },
+            { id: "dock_phone", name: "Phone", url: "", iconClass: "fa-solid fa-phone", bg: "linear-gradient(135deg, #00e676, #047857)", customImg: "", location: "dock", page: 1, category: "Communication", order: 1 },
+            { id: "dock_msg", name: "Messages", url: "", iconClass: "fa-solid fa-comment-dots", bg: "linear-gradient(135deg, #38bdf8, #0284c7)", customImg: "", location: "dock", page: 1, category: "Communication", order: 2 },
             { id: "dock_chrome", name: "Chrome", url: "https://google.com", iconClass: "fa-brands fa-chrome", bg: "linear-gradient(135deg, #facc15, #ef4444)", customImg: "", location: "dock", page: 1, category: "Tools", order: 3 },
             { id: "dock_cam", name: "Camera", url: "#", iconClass: "fa-solid fa-camera", bg: "linear-gradient(135deg, #64748b, #1e293b)", customImg: "", location: "dock", page: 1, category: "Tools", order: 4 }
         ];
 
         let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta_v3')) || {};
         let apps = [];
-        let currentPage = 1; // 1 = Clean Time Page
+        let currentPage = 1;
         let currentCategory = "All";
         let currentEditingId = null;
         let selectedContextApp = null;
@@ -1076,7 +1071,6 @@
         let tempLocation = "home";
         let tempPage = 2;
 
-        /* Free Drag & Drop Clock Widget Anywhere on Screen */
         (function setupClockDrag() {
             const clockEl = document.getElementById('clock-widget');
             const savedClockPos = JSON.parse(localStorage.getItem('xos16_clock_pos'));
@@ -1426,7 +1420,11 @@
             overlay.classList.add('active');
 
             setTimeout(() => {
-                if (app.packageName && window.AndroidBridge) {
+                if (app.id === 'dock_phone' && window.AndroidBridge && typeof AndroidBridge.openDialer === 'function') {
+                    AndroidBridge.openDialer();
+                } else if (app.id === 'dock_msg' && window.AndroidBridge && typeof AndroidBridge.openMessages === 'function') {
+                    AndroidBridge.openMessages();
+                } else if (app.packageName && window.AndroidBridge) {
                     AndroidBridge.launchApp(
                         app.packageName,
                         Math.round(rect.left),
@@ -1434,7 +1432,7 @@
                         Math.round(rect.width),
                         Math.round(rect.height)
                     );
-                } else if (app.url && app.url !== '#') {
+                } else if (app.url && app.url.startsWith('http')) {
                     window.location.href = app.url;
                 } else {
                     showToast(`Opening ${app.name}...`);
@@ -1527,7 +1525,6 @@
             });
         }
 
-        /* Swipe Navigation Across Zero-Screen (0), Time Page (1), Apps 1 (2), Apps 2 (3) */
         const viewport = document.getElementById('pages-viewport');
         const track = document.getElementById('pages-track');
         const clockWidget = document.getElementById('clock-widget');
@@ -1621,7 +1618,6 @@
             }
         }
 
-        /* Icon Customizer */
         function openEditModal(app) {
             currentEditingId = app.id;
             tempCustomImg = app.customImg || "";
