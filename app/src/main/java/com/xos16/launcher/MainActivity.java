@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int UNINSTALL_REQUEST_CODE = 2005;
     private WebView webView;
     private ValueCallback<Uri[]> filePathCallback;
+    private String pendingUninstallPackage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +81,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (webView != null) {
+        if (pendingUninstallPackage != null && webView != null) {
+            final String pkgToCheck = pendingUninstallPackage;
+            pendingUninstallPackage = null;
             webView.postDelayed(() -> {
                 if (webView != null) {
-                    webView.evaluateJavascript(
-                            "if(typeof refreshInstalledApps === 'function'){ refreshInstalledApps(); }",
-                            null
-                    );
+                    boolean stillInstalled = isPackageInstalled(pkgToCheck);
+                    if (!stillInstalled) {
+                        webView.evaluateJavascript(
+                                "if(typeof onAppUninstalled === 'function'){ onAppUninstalled('" + pkgToCheck + "'); }",
+                                null
+                        );
+                    }
                 }
-            }, 180);
+            }, 220);
+        }
+    }
+
+    private boolean isPackageInstalled(String packageName) {
+        if (packageName == null || packageName.isEmpty()) return false;
+        try {
+            getPackageManager().getPackageInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 
@@ -212,11 +228,24 @@ public class MainActivity extends AppCompatActivity {
             filePathCallback.onReceiveValue(results);
             filePathCallback = null;
         } else if (requestCode == UNINSTALL_REQUEST_CODE) {
+            final String checkedPkg = pendingUninstallPackage;
+            pendingUninstallPackage = null;
             if (webView != null) {
-                webView.post(() -> webView.evaluateJavascript(
-                        "if(typeof refreshInstalledApps === 'function'){ refreshInstalledApps(); }",
-                        null
-                ));
+                webView.postDelayed(() -> {
+                    if (webView != null) {
+                        if (checkedPkg != null && !isPackageInstalled(checkedPkg)) {
+                            webView.evaluateJavascript(
+                                    "if(typeof onAppUninstalled === 'function'){ onAppUninstalled('" + checkedPkg + "'); }",
+                                    null
+                            );
+                        } else {
+                            webView.evaluateJavascript(
+                                    "if(typeof refreshInstalledApps === 'function'){ refreshInstalledApps(); }",
+                                    null
+                            );
+                        }
+                    }
+                }, 180);
             }
         }
     }
@@ -363,16 +392,16 @@ public class MainActivity extends AppCompatActivity {
         public void uninstallApp(String packageName) {
             if (packageName == null || packageName.isEmpty()) return;
             runOnUiThread(() -> {
+                pendingUninstallPackage = packageName;
                 try {
                     Uri packageUri = Uri.fromParts("package", packageName, null);
                     Intent deleteIntent = new Intent(Intent.ACTION_DELETE, packageUri);
                     startActivityForResult(deleteIntent, UNINSTALL_REQUEST_CODE);
                 } catch (Exception e) {
                     try {
-                        Intent settingsIntent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        settingsIntent.setData(Uri.fromParts("package", packageName, null));
-                        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(settingsIntent);
+                        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.setData(Uri.fromParts("package", packageName, null));
+                        startActivityForResult(intent, UNINSTALL_REQUEST_CODE);
                     } catch (Exception ignored) {
                     }
                 }
@@ -410,16 +439,16 @@ public class MainActivity extends AppCompatActivity {
                 if (drawable instanceof BitmapDrawable) {
                     bitmap = ((BitmapDrawable) drawable).getBitmap();
                 } else {
-                    int w = Math.max(drawable.getIntrinsicWidth(), 80);
-                    int h = Math.max(drawable.getIntrinsicHeight(), 80);
+                    int w = Math.max(drawable.getIntrinsicWidth(), 72);
+                    int h = Math.max(drawable.getIntrinsicHeight(), 72);
                     bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(bitmap);
                     drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
                     drawable.draw(canvas);
                 }
-                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 96, 96, true);
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 84, 84, true);
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                scaled.compress(Bitmap.CompressFormat.PNG, 78, outputStream);
+                scaled.compress(Bitmap.CompressFormat.PNG, 72, outputStream);
                 byte[] byteArray = outputStream.toByteArray();
                 return "data:image/png;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP);
             } catch (Exception e) {
