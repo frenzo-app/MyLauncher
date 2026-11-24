@@ -8,10 +8,10 @@
     <style>
         :root {
             --xos-accent: #00e676;
-            --xos-glass: rgba(18, 22, 32, 0.76);
-            --xos-border: rgba(255, 255, 255, 0.16);
+            --xos-glass: rgba(255, 255, 255, 0.16);
+            --xos-border: rgba(255, 255, 255, 0.34);
             --text-main: #ffffff;
-            --text-muted: #cbd5e1;
+            --text-muted: #e2e8f0;
         }
 
         * {
@@ -62,7 +62,7 @@
                 radial-gradient(circle at 75% 30%, rgba(56, 189, 248, 0.36), transparent 60%),
                 radial-gradient(circle at 52% 82%, rgba(0, 230, 118, 0.30), transparent 62%),
                 radial-gradient(circle at 85% 75%, rgba(250, 204, 21, 0.24), transparent 55%);
-            filter: blur(18px);
+            filter: blur(16px);
             pointer-events: none;
             z-index: -1;
         }
@@ -106,14 +106,13 @@
             pointer-events: none;
         }
 
-        /* 4-Page Track: [0: Zero-Screen, 1: Clean Time Page, 2: Apps Page 1, 3: Apps Page 2] */
+        /* Ultra-Smooth 4-Page Track */
         .pages-viewport {
             flex: 1;
             width: 100vw;
             overflow: hidden;
             position: relative;
             z-index: 5;
-            contain: layout size style;
             transform: translate3d(0, 0, 0);
         }
 
@@ -127,7 +126,7 @@
         }
 
         .pages-track.snapping {
-            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
 
         .home-page {
@@ -139,8 +138,8 @@
             grid-auto-rows: min-content;
             gap: 15px 10px;
             align-content: start;
-            contain: layout style;
             transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
         }
 
         /* Left Zero-Screen Page */
@@ -150,11 +149,10 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: 48px 16px 24px 16px;
-            background: rgba(16, 20, 29, 0.86);
+            background: rgba(16, 20, 29, 0.88);
             display: flex;
             flex-direction: column;
             gap: 16px;
-            contain: layout style;
             transform: translate3d(0, 0, 0);
         }
 
@@ -163,7 +161,7 @@
         }
 
         .zs-search-bar {
-            background: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.16);
             border: 1px solid var(--xos-border);
             border-radius: 50px;
             padding: 13px 18px;
@@ -177,7 +175,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 255, 255, 0.88);
             font-size: 16px;
         }
 
@@ -198,7 +196,7 @@
             width: 34px;
             height: 34px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.16);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -363,7 +361,7 @@
         }
 
         .zs-go-btn {
-            background: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.16);
             color: #ffffff;
             border: none;
             border-radius: 18px;
@@ -432,7 +430,7 @@
             align-items: center;
             font-size: 30px;
             color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
             overflow: hidden;
             position: relative;
             transform: translate3d(0, 0, 0);
@@ -473,8 +471,8 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            transition: width 0.14s ease, background-color 0.14s ease;
+            background: rgba(255, 255, 255, 0.45);
+            transition: width 0.1s ease, background-color 0.1s ease;
         }
 
         .dot.active {
@@ -483,7 +481,7 @@
             background: #ffffff;
         }
 
-        /* Bottom Dock */
+        /* Light Translucent Bottom Dock Box */
         .dock-wrapper {
             padding: 4px 12px 18px 12px;
             z-index: 10;
@@ -500,6 +498,7 @@
             grid-template-columns: repeat(4, 1fr);
             align-items: center;
             gap: 10px;
+            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.14);
             transform: translate3d(0, 0, 0);
         }
 
@@ -518,7 +517,7 @@
         .app-drawer {
             position: fixed;
             inset: 0;
-            background: linear-gradient(180deg, rgba(15, 20, 32, 0.94) 0%, rgba(10, 14, 24, 0.97) 100%);
+            background: linear-gradient(180deg, rgba(16, 22, 34, 0.94) 0%, rgba(12, 16, 26, 0.97) 100%);
             z-index: 60;
             display: flex;
             flex-direction: column;
@@ -526,11 +525,10 @@
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.1s linear, visibility 0s linear 0.16s;
+            transition: transform 0.13s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.07s linear, visibility 0s linear 0.13s;
             padding: 48px 16px 18px 16px;
             will-change: transform, opacity;
             backface-visibility: hidden;
-            contain: layout size style;
         }
 
         .app-drawer.dragging {
@@ -542,7 +540,7 @@
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
-            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.1s linear, visibility 0s linear 0s;
+            transition: transform 0.13s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.07s linear, visibility 0s linear 0s;
         }
 
         .category-bar {
@@ -551,7 +549,7 @@
             overflow-x: auto;
             padding: 12px 6px 14px 6px;
             scrollbar-width: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             margin-top: 8px;
             margin-bottom: 10px;
             transform: translate3d(0, 0, 0);
@@ -564,7 +562,7 @@
         .cat-tab {
             font-size: 18px;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.58);
+            color: rgba(255, 255, 255, 0.6);
             white-space: nowrap;
             cursor: pointer;
             padding-bottom: 8px;
@@ -597,14 +595,12 @@
             padding: 10px 4px 16px 4px;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
-            contain: strict;
             transform: translate3d(0, 0, 0);
             will-change: scroll-position;
+            backface-visibility: hidden;
         }
 
         .drawer-grid .app-item {
-            content-visibility: auto;
-            contain-intrinsic-size: 88px;
             transform: translate3d(0, 0, 0);
             backface-visibility: hidden;
         }
@@ -614,12 +610,12 @@
         }
 
         .drawer-grid::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.24);
             border-radius: 10px;
         }
 
         .drawer-bottom-search {
-            background: rgba(255, 255, 255, 0.13);
+            background: rgba(255, 255, 255, 0.15);
             border: 1px solid var(--xos-border);
             border-radius: 50px;
             padding: 12px 18px;
@@ -640,14 +636,14 @@
         }
 
         .drawer-bottom-search input::placeholder {
-            color: rgba(255, 255, 255, 0.68);
+            color: rgba(255, 255, 255, 0.72);
         }
 
         /* Long Press Context Menu */
         .context-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.58);
+            background: rgba(0, 0, 0, 0.55);
             display: none;
             justify-content: center;
             align-items: center;
@@ -704,7 +700,7 @@
             opacity: 0;
             transform: translate3d(0, 0, 0) scale(0.5);
             border-radius: 36px;
-            transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.1s linear;
+            transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.07s linear;
             will-change: transform, opacity;
         }
 
@@ -984,6 +980,10 @@
                 <i class="fa-solid fa-circle-info" style="color:#38bdf8; width:18px;"></i>
                 <span>App info</span>
             </div>
+            <div class="context-option" id="context-add-home-option" onclick="triggerAddToHome()">
+                <i class="fa-solid fa-plus-circle" style="color:#00e676; width:18px;"></i>
+                <span>Add to Home screen</span>
+            </div>
             <div class="context-option" id="context-remove-option" onclick="triggerRemoveFromHome()">
                 <i class="fa-solid fa-minus-circle" style="color:#fbbf24; width:18px;"></i>
                 <span>Remove</span>
@@ -1076,7 +1076,7 @@
 
         let savedMeta = JSON.parse(localStorage.getItem('xos16_app_meta_v3')) || {};
         let apps = [];
-        let lastAppsHash = "";
+        let isRefreshingApps = false;
         let currentPage = 1;
         let currentCategory = "All";
         let currentEditingId = null;
@@ -1184,76 +1184,88 @@
             setTimeout(() => {
                 const inp = document.getElementById('drawer-search-input');
                 if (inp) inp.focus();
-            }, 90);
+            }, 80);
+        }
+
+        function onAppUninstalled(pkgName) {
+            if (!pkgName) return;
+            apps = apps.filter(a => a.packageName !== pkgName && a.id !== pkgName);
+            if (savedMeta[pkgName]) {
+                delete savedMeta[pkgName];
+                localStorage.setItem('xos16_app_meta_v3', JSON.stringify(savedMeta));
+            }
+            document.querySelectorAll(`.app-item[data-id="${CSS.escape(pkgName)}"]`).forEach(el => el.remove());
+            showToast("App uninstalled");
         }
 
         function refreshInstalledApps() {
-            let systemApps = [];
-            let rawStr = "";
-            if (window.AndroidBridge && typeof AndroidBridge.getInstalledApps === 'function') {
-                try {
-                    rawStr = AndroidBridge.getInstalledApps() || "";
-                    const hashKey = rawStr.length + "_" + rawStr.slice(0, 64) + "_" + rawStr.slice(-64) + "_" + JSON.stringify(savedMeta).length;
-                    if (hashKey === lastAppsHash && apps.length > 0) {
-                        return;
-                    }
-                    lastAppsHash = hashKey;
-                    const raw = JSON.parse(rawStr);
-                    systemApps = raw.map((item, idx) => ({
-                        id: item.packageName,
-                        packageName: item.packageName,
-                        name: item.name,
-                        systemIcon: item.systemIcon,
-                        customImg: "",
-                        iconClass: "",
-                        bg: "transparent",
-                        location: idx < 24 ? "home" : "drawer",
-                        page: idx < 12 ? 2 : 3,
-                        category: item.category || "Tools",
-                        order: 100 + idx
-                    }));
-                } catch (e) {}
-            }
+            if (isRefreshingApps) return;
+            isRefreshingApps = true;
 
-            const mergedMap = new Map();
-            htmlStylizedApps.forEach(a => mergedMap.set(a.id, { ...a }));
-
-            systemApps.forEach(sys => {
-                const lower = sys.packageName.toLowerCase();
-                if (lower.includes("youtube") && !lower.includes("music")) {
-                    mergedMap.get("youtube").packageName = sys.packageName;
-                    mergedMap.get("youtube").systemIcon = sys.systemIcon;
-                } else if (lower.includes("facebook.katana")) {
-                    mergedMap.get("facebook").packageName = sys.packageName;
-                    mergedMap.get("facebook").systemIcon = sys.systemIcon;
-                } else if (lower.includes("instagram")) {
-                    mergedMap.get("instagram").packageName = sys.packageName;
-                    mergedMap.get("instagram").systemIcon = sys.systemIcon;
-                } else if (lower.includes("whatsapp")) {
-                    mergedMap.get("whatsapp").packageName = sys.packageName;
-                    mergedMap.get("whatsapp").systemIcon = sys.systemIcon;
-                } else if (lower.includes("dialer") || lower.includes("contacts")) {
-                    if (!mergedMap.get("dock_phone").packageName) mergedMap.get("dock_phone").packageName = sys.packageName;
-                    mergedMap.set(sys.id, sys);
-                } else if (lower.includes("mms") || lower.includes("messaging")) {
-                    if (!mergedMap.get("dock_msg").packageName) mergedMap.get("dock_msg").packageName = sys.packageName;
-                    mergedMap.set(sys.id, sys);
-                } else if (lower.includes("chrome")) {
-                    mergedMap.get("dock_chrome").packageName = sys.packageName;
-                } else if (lower.includes("camera")) {
-                    mergedMap.get("dock_cam").packageName = sys.packageName;
-                } else {
-                    mergedMap.set(sys.id, sys);
+            try {
+                let systemApps = [];
+                if (window.AndroidBridge && typeof AndroidBridge.getInstalledApps === 'function') {
+                    try {
+                        const rawStr = AndroidBridge.getInstalledApps() || "[]";
+                        const raw = JSON.parse(rawStr);
+                        systemApps = raw.map((item, idx) => ({
+                            id: item.packageName,
+                            packageName: item.packageName,
+                            name: item.name,
+                            systemIcon: item.systemIcon,
+                            customImg: "",
+                            iconClass: "",
+                            bg: "transparent",
+                            location: idx < 24 ? "home" : "drawer",
+                            page: idx < 12 ? 2 : 3,
+                            category: item.category || "Tools",
+                            order: 100 + idx
+                        }));
+                    } catch (e) {}
                 }
-            });
 
-            apps = Array.from(mergedMap.values()).map(app => {
-                if (savedMeta[app.id]) return { ...app, ...savedMeta[app.id] };
-                return app;
-            });
+                const mergedMap = new Map();
+                htmlStylizedApps.forEach(a => mergedMap.set(a.id, { ...a }));
 
-            drawerBuiltOnce = false;
-            renderAll();
+                systemApps.forEach(sys => {
+                    const lower = sys.packageName.toLowerCase();
+                    if (lower.includes("youtube") && !lower.includes("music")) {
+                        mergedMap.get("youtube").packageName = sys.packageName;
+                        mergedMap.get("youtube").systemIcon = sys.systemIcon;
+                    } else if (lower.includes("facebook.katana")) {
+                        mergedMap.get("facebook").packageName = sys.packageName;
+                        mergedMap.get("facebook").systemIcon = sys.systemIcon;
+                    } else if (lower.includes("instagram")) {
+                        mergedMap.get("instagram").packageName = sys.packageName;
+                        mergedMap.get("instagram").systemIcon = sys.systemIcon;
+                    } else if (lower.includes("whatsapp")) {
+                        mergedMap.get("whatsapp").packageName = sys.packageName;
+                        mergedMap.get("whatsapp").systemIcon = sys.systemIcon;
+                    } else if (lower.includes("dialer") || lower.includes("contacts")) {
+                        if (!mergedMap.get("dock_phone").packageName) mergedMap.get("dock_phone").packageName = sys.packageName;
+                        mergedMap.set(sys.id, sys);
+                    } else if (lower.includes("mms") || lower.includes("messaging")) {
+                        if (!mergedMap.get("dock_msg").packageName) mergedMap.get("dock_msg").packageName = sys.packageName;
+                        mergedMap.set(sys.id, sys);
+                    } else if (lower.includes("chrome")) {
+                        mergedMap.get("dock_chrome").packageName = sys.packageName;
+                    } else if (lower.includes("camera")) {
+                        mergedMap.get("dock_cam").packageName = sys.packageName;
+                    } else {
+                        mergedMap.set(sys.id, sys);
+                    }
+                });
+
+                apps = Array.from(mergedMap.values()).map(app => {
+                    if (savedMeta[app.id]) return { ...app, ...savedMeta[app.id] };
+                    return app;
+                });
+
+                drawerBuiltOnce = false;
+                renderAll();
+            } finally {
+                isRefreshingApps = false;
+            }
         }
 
         function createAppElement(app, context) {
@@ -1267,12 +1279,12 @@
             let iconBg = app.bg || 'transparent';
 
             if (app.customImg) {
-                iconHtml = `<img src="${app.customImg}" alt="${app.name}" loading="lazy" decoding="async">`;
+                iconHtml = `<img src="${app.customImg}" alt="${app.name}" decoding="async">`;
                 iconBg = 'transparent';
             } else if (app.iconClass) {
                 iconHtml = `<i class="${app.iconClass}"></i>`;
             } else if (app.systemIcon) {
-                iconHtml = `<img src="${app.systemIcon}" alt="${app.name}" loading="lazy" decoding="async">`;
+                iconHtml = `<img src="${app.systemIcon}" alt="${app.name}" decoding="async">`;
                 iconBg = 'transparent';
             } else {
                 iconHtml = `<i class="fa-solid fa-cube"></i>`;
@@ -1309,7 +1321,7 @@
                     isAnyAppDragging = true;
                     el.classList.add('dragging');
                     if (navigator.vibrate) navigator.vibrate(35);
-                }, 480);
+                }, 460);
             }, { passive: true });
 
             el.addEventListener('touchmove', (e) => {
@@ -1420,10 +1432,18 @@
             selectedContextApp = app;
             selectedContextSource = sourceContext || (app.location === 'home' ? 'home' : 'drawer');
             document.getElementById('context-app-title').innerText = app.name;
+
+            const addHomeBtn = document.getElementById('context-add-home-option');
             const removeBtn = document.getElementById('context-remove-option');
-            if (removeBtn) {
-                removeBtn.style.display = (app.location === 'home' || selectedContextSource === 'home') ? 'flex' : 'none';
+
+            if (selectedContextSource === 'drawer') {
+                if (addHomeBtn) addHomeBtn.style.display = 'flex';
+                if (removeBtn) removeBtn.style.display = 'none';
+            } else {
+                if (addHomeBtn) addHomeBtn.style.display = 'none';
+                if (removeBtn) removeBtn.style.display = app.location === 'home' ? 'flex' : 'none';
             }
+
             document.getElementById('context-overlay').style.display = 'flex';
         }
 
@@ -1431,6 +1451,19 @@
             if (!e || e.target.id === 'context-overlay') {
                 document.getElementById('context-overlay').style.display = 'none';
             }
+        }
+
+        function triggerAddToHome() {
+            closeContextMenu();
+            if (!selectedContextApp) return;
+            const targetPage = currentPage < 2 ? 2 : currentPage;
+            selectedContextApp.location = 'home';
+            selectedContextApp.page = targetPage;
+            saveMetaForApp(selectedContextApp);
+            renderAll();
+            toggleDrawer(false);
+            goToPage(targetPage);
+            showToast(`${selectedContextApp.name} added to Home screen`);
         }
 
         function triggerAppInfo() {
@@ -1507,8 +1540,8 @@
 
                 setTimeout(() => {
                     overlay.classList.remove('active');
-                }, 180);
-            }, 40);
+                }, 140);
+            }, 25);
         }
 
         function renderAll() {
@@ -1620,7 +1653,7 @@
                 return;
             }
 
-            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 4) {
                 isHorizontalSwipe = true;
                 const baseOffset = -currentPage * window.innerWidth;
                 pendingTrackX = baseOffset + dx;
@@ -1648,10 +1681,10 @@
             const dy = e.changedTouches[0].clientY - swipeStartY;
 
             if (isHorizontalSwipe) {
-                if (dx < -34 && currentPage < 3) goToPage(currentPage + 1);
-                else if (dx > 34 && currentPage > 0) goToPage(currentPage - 1);
+                if (dx < -28 && currentPage < 3) goToPage(currentPage + 1);
+                else if (dx > 28 && currentPage > 0) goToPage(currentPage - 1);
                 else goToPage(currentPage);
-            } else if (dy < -36 && Math.abs(dx) < 55 && currentPage !== 0) {
+            } else if (dy < -32 && Math.abs(dx) < 55 && currentPage !== 0) {
                 toggleDrawer(true);
             }
         }, { passive: true });
@@ -1660,7 +1693,7 @@
             currentPage = Math.min(Math.max(pageIdx, 0), 3);
             track.classList.add('snapping');
             track.style.transform = `translate3d(-${currentPage * 100}vw, 0, 0)`;
-            clockWidget.style.display = currentPage === 1 ? 'block' : 'none';
+            clockWidget.style.visibility = currentPage === 1 ? 'visible' : 'hidden';
 
             const dots = document.querySelectorAll('.dot');
             const activeDotIdx = currentPage <= 1 ? 0 : (currentPage === 2 ? 1 : 2);
@@ -1706,7 +1739,7 @@
                 if (!drawerDragRaf) {
                     drawerDragRaf = requestAnimationFrame(() => {
                         appDrawerEl.style.transform = `translate3d(0, ${pendingDrawerPull}px, 0)`;
-                        appDrawerEl.style.opacity = String(Math.max(0.2, 1 - pendingDrawerPull / (window.innerHeight * 0.85)));
+                        appDrawerEl.style.opacity = String(Math.max(0.25, 1 - pendingDrawerPull / (window.innerHeight * 0.85)));
                         drawerDragRaf = null;
                     });
                 }
@@ -1747,6 +1780,8 @@
             tempLocation = app.location || "home";
             tempPage = app.page ?? 2;
 
+            const fileInput = document.getElementById('edit-image-file');
+            if (fileInput) fileInput.value = "";
             document.getElementById('edit-name').value = app.name;
             document.getElementById('icon-modal').style.display = 'flex';
         }
@@ -1762,7 +1797,7 @@
         }
 
         function handleImageUpload(event) {
-            const file = event.target.files[0];
+            const file = event.target.files && event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1774,11 +1809,13 @@
                     canvas.getContext('2d').drawImage(img, 0, 0, 128, 128);
                     tempCustomImg = canvas.toDataURL('image/png');
                     tempIconClass = "";
-                    showToast("New icon image selected!");
+                    tempBg = "transparent";
+                    showToast("Image ready! Tap Save");
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
+            event.target.value = "";
         }
 
         function selectPreset(iconClass, bg) {
@@ -1789,7 +1826,10 @@
         }
 
         function saveAppChanges() {
+            if (!currentEditingId) return;
             const newName = document.getElementById('edit-name').value.trim();
+            let updatedTarget = null;
+
             apps = apps.map(app => {
                 if (app.id === currentEditingId) {
                     const updated = {
@@ -1801,19 +1841,43 @@
                         location: tempLocation,
                         page: tempPage
                     };
+                    updatedTarget = updated;
                     saveMetaForApp(updated);
                     return updated;
                 }
                 return app;
             });
 
-            drawerBuiltOnce = false;
-            renderAll();
+            if (updatedTarget) {
+                document.querySelectorAll(`.app-item[data-id="${CSS.escape(updatedTarget.id)}"]`).forEach(el => {
+                    const iconBox = el.querySelector('.app-icon');
+                    const nameBox = el.querySelector('.app-name');
+                    if (nameBox) nameBox.textContent = updatedTarget.name;
+                    if (iconBox) {
+                        if (updatedTarget.customImg) {
+                            iconBox.style.background = 'transparent';
+                            iconBox.innerHTML = `<img src="${updatedTarget.customImg}" alt="${updatedTarget.name}" decoding="async">`;
+                        } else if (updatedTarget.iconClass) {
+                            iconBox.style.background = updatedTarget.bg || 'transparent';
+                            iconBox.innerHTML = `<i class="${updatedTarget.iconClass}"></i>`;
+                        } else if (updatedTarget.systemIcon) {
+                            iconBox.style.background = 'transparent';
+                            iconBox.innerHTML = `<img src="${updatedTarget.systemIcon}" alt="${updatedTarget.name}" decoding="async">`;
+                        }
+                    }
+                });
+                if (tempLocation !== undefined || tempPage !== undefined) {
+                    drawerBuiltOnce = false;
+                    renderAll();
+                }
+            }
+
             closeModal();
             showToast("Saved!");
         }
 
         function resetToSystemIcon() {
+            if (!currentEditingId) return;
             apps = apps.map(app => {
                 if (app.id === currentEditingId) {
                     const updated = {
@@ -1843,7 +1907,9 @@
                 page: app.page,
                 order: app.order
             };
-            localStorage.setItem('xos16_app_meta_v3', JSON.stringify(savedMeta));
+            try {
+                localStorage.setItem('xos16_app_meta_v3', JSON.stringify(savedMeta));
+            } catch (e) {}
         }
 
         let lastClockText = "";
@@ -1874,7 +1940,7 @@
             toastTimer = setTimeout(() => { t.style.display = 'none'; }, 1800);
         }
 
-        setInterval(updateClock, 5000);
+        setInterval(updateClock, 10000);
         updateClock();
         refreshInstalledApps();
     </script>
